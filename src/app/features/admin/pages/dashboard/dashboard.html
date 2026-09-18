@@ -1,1 +1,58 @@
-<p>dashboard works!</p>
+<div class="dashboard-container">
+  <header class="dashboard-header">
+    <h1 class="dashboard-title">Panel de Control - Inventario</h1>
+    <a routerLink="/admin/nuevo-producto" class="btn btn-primary">
+      <span class="btn-icon">+</span> Añadir Producto
+    </a>
+  </header>
+
+  <main class="dashboard-content">
+    <div class="table-responsive">
+      <table class="inventory-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Producto</th>
+            <th>Categoría</th>
+            <th>Precio</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (product of products; track product.id) {
+            <tr>
+              <td class="col-id">#{{ product.id }}</td>
+              <td class="col-name">{{ product.nombre }}</td>
+              <td>{{ product.categoria }}</td>
+              <td class="col-price">${{ product.precio.toLocaleString('es-CO') }}</td>
+              <td>
+                <span 
+                  class="badge" 
+                  [class.badge-active]="product.estado === 'Activo'"
+                  [class.badge-hidden]="product.estado === 'Oculto'"
+                >
+                  {{ product.estado }}
+                </span>
+              </td>
+              <td class="col-actions">
+                <button type="button" class="btn-action btn-edit" title="Editar producto">
+                  Editar
+                </button>
+                <button type="button" class="btn-action btn-delete" title="Eliminar producto">
+                  Eliminar
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="empty-state">
+                No hay productos disponibles en el inventario.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>

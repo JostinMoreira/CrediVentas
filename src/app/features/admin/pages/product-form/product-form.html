@@ -1,1 +1,104 @@
-<p>product-form works!</p>
+<div class="form-container">
+  <div class="form-header">
+    <a routerLink="/admin" class="btn-back">
+      ← Volver al panel
+    </a>
+  </div>
+
+  <div class="card">
+    <h2 class="card-title">Gestión de Producto</h2>
+    <p class="card-subtitle">Ingresa la información necesaria para publicar el producto en el catálogo digital.</p>
+
+    <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="product-form">
+      <!-- Nombre del Producto -->
+      <div class="form-group">
+        <label for="nombre" class="form-label">Nombre del Producto</label>
+        <input
+          id="nombre"
+          type="text"
+          formControlName="nombre"
+          class="form-control"
+          [class.is-invalid]="isFieldInvalid('nombre')"
+          placeholder="Ej: Tractor Agrícola 75 HP / Nevera 400L"
+        />
+        @if (isFieldInvalid('nombre')) {
+          <span class="error-message">El nombre del producto es obligatorio.</span>
+        }
+      </div>
+
+      <!-- Categoría -->
+      <div class="form-group">
+        <label for="categoria" class="form-label">Categoría</label>
+        <select
+          id="categoria"
+          formControlName="categoria"
+          class="form-control"
+          [class.is-invalid]="isFieldInvalid('categoria')"
+        >
+          <option value="" disabled selected>Selecciona una categoría</option>
+          <option value="Maquinaria Agrícola">Maquinaria Agrícola</option>
+          <option value="Electrodomésticos">Electrodomésticos</option>
+        </select>
+        @if (isFieldInvalid('categoria')) {
+          <span class="error-message">Debes seleccionar una categoría.</span>
+        }
+      </div>
+
+      <!-- Precio -->
+      <div class="form-group">
+        <label for="precio" class="form-label">Precio ($)</label>
+        <input
+          id="precio"
+          type="number"
+          formControlName="precio"
+          class="form-control"
+          [class.is-invalid]="isFieldInvalid('precio')"
+          placeholder="Ej: 3500000"
+        />
+        @if (isFieldInvalid('precio')) {
+          <span class="error-message">Ingresa un precio válido.</span>
+        }
+      </div>
+
+      <!-- Estado -->
+      <div class="form-group">
+        <label for="estado" class="form-label">Estado</label>
+        <select
+          id="estado"
+          formControlName="estado"
+          class="form-control"
+          [class.is-invalid]="isFieldInvalid('estado')"
+        >
+          <option value="Activo">Activo</option>
+          <option value="Oculto">Oculto</option>
+        </select>
+        @if (isFieldInvalid('estado')) {
+          <span class="error-message">El estado es obligatorio.</span>
+        }
+      </div>
+
+      <!-- URL de la Imagen -->
+      <div class="form-group">
+        <label for="imagenUrl" class="form-label">URL de la Imagen</label>
+        <input
+          id="imagenUrl"
+          type="text"
+          formControlName="imagenUrl"
+          class="form-control"
+          [class.is-invalid]="isFieldInvalid('imagenUrl')"
+          placeholder="https://ejemplo.com/imagen.jpg"
+        />
+        @if (isFieldInvalid('imagenUrl')) {
+          <span class="error-message">La URL de la imagen es obligatoria.</span>
+        }
+      </div>
+
+      <!-- Botón Submit -->
+      <div class="form-actions">
+        <button type="submit" class="btn-submit">
+          Guardar Producto
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
