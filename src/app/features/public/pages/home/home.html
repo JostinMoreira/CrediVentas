@@ -1,1 +1,23 @@
-<p>home works!</p>
+<!-- Banner Principal -->
+<section class="hero-section">
+    <div class="hero-content">
+        <h2>Equipamos tu hogar y el campo ecuatoriano</h2>
+        <p>Electrodomésticos y maquinaria agropecuaria de alta calidad directo a tu puerta.</p>
+    </div>
+</section>
+
+<!-- Catálogo de Productos -->
+<section class="catalog-section">
+    <div class="section-header">
+        <h3>Nuestro Catálogo</h3>
+        <p>Explora nuestras categorías y haz tu pedido por WhatsApp</p>
+    </div>
+
+    <!-- Cuadrícula (Grid) -->
+    <div class="products-grid">
+        <!-- El @for repite la etiqueta <app-product-card> 8 veces -->
+        @for (item of productosFalsos; track $index) {
+        <app-product-card></app-product-card>
+        }
+    </div>
+</section>

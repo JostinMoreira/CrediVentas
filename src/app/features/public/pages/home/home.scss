@@ -1,0 +1,46 @@
+.hero-section {
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1590483736622-398541ce1a3a?q=80&w=2070&auto=format&fit=crop') center/cover;
+    color: white;
+    text-align: center;
+    padding: 4rem 1rem;
+    margin-bottom: 2rem;
+
+    .hero-content h2 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .hero-content p {
+        font-size: 1.2rem;
+        color: #e0e0e0;
+    }
+}
+
+.catalog-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem 4rem 2rem;
+
+    .section-header {
+        text-align: center;
+        margin-bottom: 3rem;
+
+        h3 {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        p {
+            color: #666;
+        }
+    }
+
+    /* La magia del Responsive Design */
+    .products-grid {
+        display: grid;
+        /* Esto hace que entren todas las tarjetas de 280px que quepan en la pantalla */
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 2rem;
+    }
+}
