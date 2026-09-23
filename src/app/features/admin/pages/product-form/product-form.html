@@ -35,7 +35,7 @@
           class="form-control"
           [class.is-invalid]="isFieldInvalid('categoria')"
         >
-          <option value="" disabled selected>Selecciona una categoría</option>
+          <option value="" disabled>Selecciona una categoría</option>
           <option value="Maquinaria Agrícola">Maquinaria Agrícola</option>
           <option value="Electrodomésticos">Electrodomésticos</option>
         </select>
@@ -77,26 +77,25 @@
         }
       </div>
 
-      <!-- URL de la Imagen -->
+      <!-- Imagen del Producto (Archivo) -->
       <div class="form-group">
-        <label for="imagenUrl" class="form-label">URL de la Imagen</label>
+        <label for="imagen" class="form-label">Imagen del Producto</label>
         <input
-          id="imagenUrl"
-          type="text"
-          formControlName="imagenUrl"
+          id="imagen"
+          type="file"
+          accept="image/*"
+          (change)="onFileSelected($event)"
           class="form-control"
-          [class.is-invalid]="isFieldInvalid('imagenUrl')"
-          placeholder="https://ejemplo.com/imagen.jpg"
         />
-        @if (isFieldInvalid('imagenUrl')) {
-          <span class="error-message">La URL de la imagen es obligatoria.</span>
+        @if (!selectedFile && productForm.touched) {
+          <span class="error-message">Debes seleccionar una imagen.</span>
         }
       </div>
 
       <!-- Botón Submit -->
       <div class="form-actions">
-        <button type="submit" class="btn-submit">
-          Guardar Producto
+        <button type="submit" class="btn-submit" [disabled]="isSubmitting">
+          {{ isSubmitting ? 'Guardando...' : 'Guardar Producto' }}
         </button>
       </div>
     </form>

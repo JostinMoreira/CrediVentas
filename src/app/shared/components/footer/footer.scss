@@ -1,0 +1,6 @@
+:host { display: block; }
+.site-footer { display: grid; grid-template-columns: 1fr auto; gap: 6px 24px; align-items: center; padding: 26px clamp(20px, 6vw, 88px); border-top: 1px solid #e9e6de; background: #f7f6f1; color: #68716a; }
+.site-footer p { margin: 0; color: #193f32; font-size: 14px; font-weight: 800; }
+.site-footer span { font-size: 12px; }
+.site-footer small { grid-column: 2; grid-row: 1 / span 2; color: #8b9189; font-size: 11px; }
+@media (max-width: 520px) { .site-footer { grid-template-columns: 1fr; } .site-footer small { grid-column: auto; grid-row: auto; } }

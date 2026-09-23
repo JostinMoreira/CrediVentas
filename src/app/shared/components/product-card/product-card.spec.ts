@@ -12,6 +12,7 @@ describe('ProductCard', () => {
 
     fixture = TestBed.createComponent(ProductCard);
     component = fixture.componentInstance;
+    component.product = { nombre: 'Producto prueba', categoria: 'Pruebas', precio: 10, estado: 'Activo' };
     await fixture.whenStable();
   });
 

@@ -1,3 +1,5 @@
+<app-navbar />
+<app-navbar />
 <!-- Banner Principal -->
 <section class="hero-section">
     <div class="hero-content">
@@ -15,9 +17,20 @@
 
     <!-- Cuadrícula (Grid) -->
     <div class="products-grid">
-        <!-- El @for repite la etiqueta <app-product-card> 8 veces -->
-        @for (item of productosFalsos; track $index) {
-        <app-product-card></app-product-card>
+        @if (isLoading) {
+          <p style="text-align: center; width: 100%; grid-column: 1 / -1;">Cargando catálogo...</p>
+        } @else if (loadError) {
+          <p class="catalog-message">No pudimos cargar el catálogo. Inténtalo de nuevo más tarde.</p>
+        } @else {
+          @for (product of products; track product.id) {
+            <a class="product-link" [routerLink]="['/producto', product.id]">
+              <app-product-card [product]="product"></app-product-card>
+            </a>
+          } @empty {
+            <p style="text-align: center; width: 100%; grid-column: 1 / -1;">No hay productos disponibles por el momento.</p>
+          }
         }
     </div>
 </section>
+<app-footer />
+<app-footer />

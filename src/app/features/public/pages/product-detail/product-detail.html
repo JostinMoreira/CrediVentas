@@ -1,1 +1,24 @@
-<p>product-detail works!</p>
+<app-navbar />
+<main class="detail-page">
+  <a routerLink="/" class="back-link">← Volver al catálogo</a>
+  @if (isLoading) {
+    <p class="detail-message">Cargando producto…</p>
+  } @else if (product) {
+    <article class="detail-card">
+      @if (product.imagenUrl) {
+        <img [src]="product.imagenUrl" [alt]="product.nombre">
+      } @else {
+        <div class="image-placeholder">Imagen próximamente</div>
+      }
+      <div class="detail-copy">
+        <span class="category">{{ product.categoria }}</span>
+        <h1>{{ product.nombre }}</h1>
+        <p class="price">{{ product.precio | currency:'USD':'symbol':'1.2-2':'es-EC' }}</p>
+        <a class="whatsapp-link" [href]="whatsappUrl" target="_blank" rel="noopener noreferrer">Consultar por WhatsApp</a>
+      </div>
+    </article>
+  } @else {
+    <p class="detail-message">No encontramos este producto o ya no está disponible.</p>
+  }
+</main>
+<app-footer />

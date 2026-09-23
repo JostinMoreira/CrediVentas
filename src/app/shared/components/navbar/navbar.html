@@ -1,1 +1,10 @@
-<p>navbar works!</p>
+<header class="site-header">
+  <a class="brand" routerLink="/" aria-label="Crediventas Caminante, inicio">
+    <span class="brand-mark">CC</span>
+    <span class="brand-name">Crediventas <small>Caminante</small></span>
+  </a>
+  <nav aria-label="Navegación principal">
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Catálogo</a>
+    <a routerLink="/login" class="admin-link">Administración</a>
+  </nav>
+</header>

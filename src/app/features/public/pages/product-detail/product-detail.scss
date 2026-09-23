@@ -1,0 +1,13 @@
+:host { display: block; min-height: 100vh; background: #f7f6f1; }
+.detail-page { max-width: 1100px; margin: 0 auto; padding: 40px 24px; }
+.back-link { display: inline-block; margin-bottom: 24px; color: #315d49; text-decoration: none; font-weight: 700; }
+.detail-card { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(280px, .9fr); overflow: hidden; border: 1px solid #e9e6de; border-radius: 18px; background: white; }
+.detail-card img, .image-placeholder { width: 100%; min-height: 400px; max-height: 600px; object-fit: cover; background: #f0eee8; }
+.image-placeholder { display: grid; place-items: center; color: #899088; }
+.detail-copy { align-self: center; padding: clamp(24px, 5vw, 56px); }
+.category { color: #bc6c3e; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; }
+h1 { margin: 14px 0; color: #25342b; font-size: clamp(28px, 4vw, 42px); line-height: 1.15; }
+.price { margin: 22px 0 28px; color: #bc6c3e; font-size: 26px; font-weight: 800; }
+.whatsapp-link { display: inline-block; padding: 14px 20px; border-radius: 9px; background: #1f6848; color: white; text-decoration: none; font-weight: 700; }
+.detail-message { padding: 60px 12px; color: #68716a; text-align: center; }
+@media (max-width: 700px) { .detail-page { padding: 24px 16px; } .detail-card { grid-template-columns: 1fr; } .detail-card img, .image-placeholder { min-height: 260px; max-height: 380px; } }

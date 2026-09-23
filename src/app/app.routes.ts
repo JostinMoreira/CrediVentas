@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
     // ==========================================
@@ -21,16 +22,18 @@ export const routes: Routes = [
     {
         path: 'login',
         title: 'Acceso Administrativo',
-        loadComponent: () => import('./features/admin/pages/login/login').then(m => m.LoginComponent)
+        loadComponent: () => import('./features/admin/pages/login/login').then(m => m.LoginComponent),
     },
     {
         path: 'admin',
         title: 'Panel de Control',
+        canActivate: [authGuard],
         loadComponent: () => import('./features/admin/pages/dashboard/dashboard').then(m => m.Dashboard)
     },
     {
         path: 'admin/nuevo-producto',
         title: 'Agregar Producto',
+        canActivate: [authGuard],
         loadComponent: () => import('./features/admin/pages/product-form/product-form').then(m => m.ProductFormComponent)
     },
 

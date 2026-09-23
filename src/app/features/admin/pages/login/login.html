@@ -1,1 +1,23 @@
-<p>login works!</p>
+<main class="login-page">
+  <form class="login-card" [formGroup]="form" (ngSubmit)="submit()">
+    <a class="brand" routerLink="/">Crediventas <span>Caminante</span></a>
+    <p class="eyebrow">ADMINISTRACIÓN</p>
+    <h1>Qué bueno verte</h1>
+    <p class="subtitle">Ingresa para gestionar tu catálogo.</p>
+
+    <label for="email">Correo electrónico</label>
+    <input id="email" type="email" autocomplete="username" formControlName="email" placeholder="tu@correo.com">
+    @if (form.controls.email.touched && form.controls.email.invalid) {
+      <span class="field-error">Ingresa un correo válido.</span>
+    }
+
+    <label for="password">Contraseña</label>
+    <input id="password" type="password" autocomplete="current-password" formControlName="password" placeholder="Tu contraseña">
+    @if (errorMessage) { <p class="error-message" role="alert">{{ errorMessage }}</p> }
+
+    <button type="submit" [disabled]="isSubmitting">
+      {{ isSubmitting ? 'Ingresando…' : 'Ingresar al panel' }}
+    </button>
+    <a class="back-link" routerLink="/">Volver al catálogo</a>
+  </form>
+</main>

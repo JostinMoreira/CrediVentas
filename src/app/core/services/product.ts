@@ -3,10 +3,11 @@ import { SupabaseService } from './supabase';
 
 export interface Product {
   id?: string;
-  name: string;
-  price: number;
-  imageUrl?: string;
-  // Agrega otras propiedades según tu esquema en PostgreSQL
+  nombre: string;
+  categoria: string;
+  precio: number;
+  estado: string;
+  imagenUrl?: string;
 }
 
 @Injectable({
@@ -21,17 +22,17 @@ export class ProductService {
    * Obtiene todos los productos de la tabla PostgreSQL
    */
   async getAll(): Promise<Product[] | null> {
-    const { data, error } = await this.supabaseService.client
-      .from(this.tableName)
-      .select('*')
-      .order('id', { ascending: false });
-
-    if (error) {
+    try {
+      const { data, error } = await this.supabaseService.client
+        .from(this.tableName)
+        .select('*')
+        .order('id', { ascending: false });
+      if (error) throw error;
+      return data as Product[];
+    } catch (error) {
       console.error('Error obteniendo productos:', error);
       return null;
     }
-
-    return data as Product[];
   }
 
   /**
@@ -39,18 +40,18 @@ export class ProductService {
    * @param product Datos del producto a crear
    */
   async create(product: Product): Promise<Product | null> {
-    const { data, error } = await this.supabaseService.client
-      .from(this.tableName)
-      .insert([product])
-      .select()
-      .single();
-
-    if (error) {
+    try {
+      const { data, error } = await this.supabaseService.client
+        .from(this.tableName)
+        .insert([product])
+        .select()
+        .single();
+      if (error) throw error;
+      return data as Product;
+    } catch (error) {
       console.error('Error creando producto:', error);
       return null;
     }
-
-    return data as Product;
   }
 
   /**
@@ -59,19 +60,19 @@ export class ProductService {
    * @param product Objeto con los datos a actualizar
    */
   async update(id: string, product: Partial<Product>): Promise<Product | null> {
-    const { data, error } = await this.supabaseService.client
-      .from(this.tableName)
-      .update(product)
-      .eq('id', id)
-      .select()
-      .single();
-
-    if (error) {
+    try {
+      const { data, error } = await this.supabaseService.client
+        .from(this.tableName)
+        .update(product)
+        .eq('id', id)
+        .select()
+        .single();
+      if (error) throw error;
+      return data as Product;
+    } catch (error) {
       console.error('Error actualizando producto:', error);
       return null;
     }
-
-    return data as Product;
   }
 
   /**
@@ -79,16 +80,16 @@ export class ProductService {
    * @param id Identificador único del producto
    */
   async delete(id: string): Promise<boolean> {
-    const { error } = await this.supabaseService.client
-      .from(this.tableName)
-      .delete()
-      .eq('id', id);
-
-    if (error) {
+    try {
+      const { error } = await this.supabaseService.client
+        .from(this.tableName)
+        .delete()
+        .eq('id', id);
+      if (error) throw error;
+      return true;
+    } catch (error) {
       console.error('Error eliminando producto:', error);
       return false;
     }
-
-    return true;
   }
 }

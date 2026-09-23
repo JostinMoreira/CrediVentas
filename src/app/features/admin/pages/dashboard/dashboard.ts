@@ -1,44 +1,57 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-
-interface Product {
-  id: number;
-  nombre: string;
-  categoria: string;
-  precio: number;
-  estado: 'Activo' | 'Oculto';
-}
+import { Product, ProductService } from '../../../../core/services/product';
+import { SlicePipe } from '@angular/common';
+import { AuthService } from '../../../../core/services/auth';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, SlicePipe],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })
-export class Dashboard {
-  // Arreglo estático de 3 productos de prueba para maquinaria agrícola y electrodomésticos
-  products: Product[] = [
-    {
-      id: 1,
-      nombre: 'Tractor Agrícola 75 HP 4x4',
-      categoria: 'Maquinaria Agrícola',
-      precio: 85000000,
-      estado: 'Activo'
-    },
-    {
-      id: 2,
-      nombre: 'Refrigerador No Frost 400L Inverter',
-      categoria: 'Electrodomésticos',
-      precio: 3200000,
-      estado: 'Activo'
-    },
-    {
-      id: 3,
-      nombre: 'Guadañadora a Gasolina 52cc',
-      categoria: 'Maquinaria Agrícola',
-      precio: 1150000,
-      estado: 'Oculto'
+export class Dashboard implements OnInit {
+  products: Product[] = [];
+  isLoading = true;
+
+  private productService = inject(ProductService);
+  private authService = inject(AuthService);
+
+  async ngOnInit(): Promise<void> {
+    await this.loadProducts();
+  }
+
+  async loadProducts(): Promise<void> {
+    this.isLoading = true;
+    try {
+      const data = await this.productService.getAll();
+      if (data) {
+        this.products = data;
+      } else {
+        alert('No se pudo cargar el inventario. Revisa tu conexión e inténtalo otra vez.');
+      }
+    } catch {
+      alert('No se pudo cargar el inventario. Revisa tu conexión e inténtalo otra vez.');
+    } finally {
+      this.isLoading = false;
     }
-  ];
+  }
+
+  async deleteProduct(id: string | undefined): Promise<void> {
+    if (!id) return;
+    const confirmed = confirm('¿Estás seguro de eliminar este producto?');
+    if (confirmed) {
+      const success = await this.productService.delete(id);
+      if (success) {
+        this.products = this.products.filter(p => p.id !== id);
+      } else {
+        alert('Error al eliminar el producto');
+      }
+    }
+  }
+
+  async logout(): Promise<void> {
+    await this.authService.signOut();
+  }
 }
