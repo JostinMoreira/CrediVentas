@@ -1,0 +1,5 @@
+export const environment = {
+  production: false,
+  supabaseUrl: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdtenVremt5cmJ1cnZodGpnZnZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxNTU4MzQsImV4cCI6MjEwNTczMTgzNH0.yd8NItQLH8e5lZajB82QN2JLPZ0Ua6GYn2sKEB5FgPY',
+  supabaseKey: 'sb_secret_aGoCogNy-hmN8_tveQh7Sw_m_wMSBVr'
+};
