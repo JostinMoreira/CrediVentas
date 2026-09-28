@@ -23,12 +23,14 @@ Catálogo digital para el negocio Crediventas Caminante. Clientes consultan prod
 
 1. Instala Node.js compatible con Angular CLI y ejecuta `npm install`.
 2. Crea un proyecto Supabase. Crea la tabla `productos` con `id`, `nombre`, `categoria`, `precio`, `estado` e `imagenUrl`. Crea un bucket público llamado `productos`.
-3. Crea un usuario administrador en Supabase Auth. No habilites registro público.
+3. Crea un usuario en Supabase Auth. Asigna `app_metadata.is_admin = true` a la cuenta autorizada mediante Admin API o función Edge con `service_role`; nunca uses `user_metadata` para autorización. No habilites registro público.
 4. Copia `.env.example` a `.env` como referencia. Angular sirve credenciales al navegador: usa solo URL del proyecto y publishable/anon key; nunca uses `sb_secret` o `service_role` en el cliente.
 5. Actualiza `src/environments/environment.ts` con la URL, publishable key y número de WhatsApp internacional sin `+` ni espacios. Para Ecuador, empieza con `593`.
 6. Revisa y ejecuta la migración SQL en el editor de Supabase. Ajusta los nombres si la tabla o bucket de tu proyecto son distintos.
 
-La migración permite lectura pública únicamente para productos activos. Los usuarios autenticados pueden gestionar el inventario y archivos. Como solo el administrador debe autenticarse, crea sus credenciales directamente en Supabase Auth y desactiva el registro abierto.
+La migración permite lectura pública únicamente para productos activos. Solo usuarios con `app_metadata.is_admin = true` pueden gestionar productos y archivos. La clave `service_role` solo se usa desde entorno seguro de administración, nunca en el frontend.
+
+El esquema inicial de seguridad y el ajuste de rendimiento ya se aplicaron al proyecto Supabase conectado. Para dar acceso administrativo, establece `app_metadata.is_admin: true` con Admin API segura para la cuenta autorizada; luego cierra e inicia sesión para renovar su JWT.
 
 ## Desarrollo
 
@@ -77,4 +79,4 @@ Antes de entregar al administrador, crea su cuenta, comparte acceso por un canal
 
 La compilación local está lista. Antes de operar, configura URL y publishable key reales de Supabase, número de WhatsApp, tabla y bucket, usuario administrador, y aplica las políticas RLS. Ejecuta el checklist móvil y de flujo con el servicio real.
 
-La aplicación no se publicó: requiere cuenta y acceso al proveedor. Capacita a Don Edison con la guía anterior al recibir acceso. La clave secreta que existía en el environment del frontend fue retirada; rótala en Supabase si era válida y revisa el historial Git, pues eliminarla del archivo actual no la borra de commits anteriores.
+La aplicación no se publicó: requiere cuenta y acceso al proveedor. La migración backend se debe aplicar una vez en Supabase SQL Editor, tras verificar columnas y tipos existentes. Define el bucket `productos` antes de ejecutarla. Capacita a Don Edison con la guía anterior al recibir acceso. La clave secreta que existía en el environment del frontend fue retirada; rótala en Supabase si era válida y revisa el historial Git, pues eliminarla del archivo actual no la borra de commits anteriores.

@@ -22,11 +22,7 @@ export class HomeComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     try {
       const data = await this.productService.getAll();
-      if (data) {
-        this.products = data.filter(p => p.estado === 'Activo');
-      } else {
-        this.loadError = true;
-      }
+      this.products = data.filter(p => p.estado === 'Activo');
     } catch {
       this.loadError = true;
     } finally {

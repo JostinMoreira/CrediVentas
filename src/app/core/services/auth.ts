@@ -17,12 +17,22 @@ export class AuthService {
   }
 
   async signIn(email: string, password: string): Promise<string | null> {
-    const { error } = await this.supabase.auth.signInWithPassword({ email, password });
-    return error?.message ?? null;
+    try {
+      const { data, error } = await this.supabase.auth.signInWithPassword({ email, password });
+      if (error) return error.message;
+      if (data.user?.app_metadata?.['is_admin'] !== true) {
+        await this.supabase.auth.signOut();
+        return 'Esta cuenta no tiene permisos de administración.';
+      }
+      return null;
+    } catch {
+      return 'No se pudo conectar con el servicio de autenticación.';
+    }
   }
 
   async signOut(): Promise<void> {
-    await this.supabase.auth.signOut();
+    const { error } = await this.supabase.auth.signOut();
+    if (error) throw error;
     await this.router.navigate(['/login']);
   }
 }

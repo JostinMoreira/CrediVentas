@@ -15,6 +15,12 @@ export class UploadService {
    */
   async uploadProductImage(file: File): Promise<string | null> {
     try {
+      if (!file.type.startsWith('image/')) {
+        throw new Error('El archivo debe ser una imagen.');
+      }
+      if (file.size === 0 || file.size > 20 * 1024 * 1024) {
+        throw new Error('La imagen debe tener un tamaño entre 1 byte y 20 MB.');
+      }
       // Opciones de compresión especificadas
       const options = {
         maxSizeMB: 0.2,
@@ -26,7 +32,14 @@ export class UploadService {
       const compressedFile = await imageCompression(file, options);
 
       // 2. Generar una ruta de archivo única para evitar sobreescrituras
-      const fileExt = compressedFile.name.split('.').pop() || 'jpg';
+      const extensionByType: Record<string, string> = {
+        'image/jpeg': 'jpg',
+        'image/png': 'png',
+        'image/webp': 'webp',
+        'image/avif': 'avif',
+      };
+      const fileExt = extensionByType[compressedFile.type];
+      if (!fileExt) throw new Error('Formato no compatible. Usa JPEG, PNG, WebP o AVIF.');
       const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
       const filePath = `images/${fileName}`;
 
@@ -34,7 +47,11 @@ export class UploadService {
       const { error: uploadError } = await this.supabaseService.client
         .storage
         .from('productos')
-        .upload(filePath, compressedFile);
+        .upload(filePath, compressedFile, {
+          contentType: compressedFile.type,
+          cacheControl: '31536000',
+          upsert: false,
+        });
 
       if (uploadError) {
         throw uploadError;
@@ -49,7 +66,7 @@ export class UploadService {
       return data.publicUrl;
     } catch (error) {
       console.error('Error en el proceso de compresión/subida:', error);
-      return null;
+      throw error;
     }
   }
 }

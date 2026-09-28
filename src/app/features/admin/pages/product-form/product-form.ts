@@ -54,12 +54,7 @@ export class ProductFormComponent {
       try {
         // 1. Subir la imagen
         const imagenUrl = await this.uploadService.uploadProductImage(this.selectedFile);
-
-        if (!imagenUrl) {
-          alert('Error al subir la imagen');
-          this.isSubmitting = false;
-          return;
-        }
+        if (!imagenUrl) throw new Error('Storage no devolvió la URL de la imagen subida.');
 
         // 2. Guardar en Supabase
         const productData = {
@@ -67,19 +62,15 @@ export class ProductFormComponent {
           imagenUrl: imagenUrl
         };
 
-        const result = await this.productService.create({
+        await this.productService.create({
           ...productData,
           precio: Number(productData['precio'])
         });
-        if (result) {
-          alert('Producto guardado correctamente');
-          this.router.navigate(['/admin']);
-        } else {
-          alert('Error al guardar el producto');
-        }
+        alert('Producto guardado correctamente');
+        this.router.navigate(['/admin']);
       } catch (error) {
         console.error(error);
-        alert('Ocurrió un error inesperado');
+        alert('No se pudo guardar el producto. Revisa tu sesión y conexión e inténtalo otra vez.');
       } finally {
         this.isSubmitting = false;
       }

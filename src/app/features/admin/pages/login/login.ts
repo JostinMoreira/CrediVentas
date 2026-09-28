@@ -32,7 +32,7 @@ export class LoginComponent {
     try {
       const error = await this.auth.signIn(this.form.controls.email.value, this.form.controls.password.value);
       if (error) {
-        this.errorMessage = 'Correo o contraseña incorrectos.';
+        this.errorMessage = error;
         return;
       }
       const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');

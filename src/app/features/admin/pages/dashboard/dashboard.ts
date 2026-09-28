@@ -26,11 +26,7 @@ export class Dashboard implements OnInit {
     this.isLoading = true;
     try {
       const data = await this.productService.getAll();
-      if (data) {
-        this.products = data;
-      } else {
-        alert('No se pudo cargar el inventario. Revisa tu conexión e inténtalo otra vez.');
-      }
+      this.products = data;
     } catch {
       alert('No se pudo cargar el inventario. Revisa tu conexión e inténtalo otra vez.');
     } finally {
@@ -42,11 +38,15 @@ export class Dashboard implements OnInit {
     if (!id) return;
     const confirmed = confirm('¿Estás seguro de eliminar este producto?');
     if (confirmed) {
-      const success = await this.productService.delete(id);
-      if (success) {
+      try {
+        const deleted = await this.productService.delete(id);
+        if (!deleted) {
+          alert('El producto ya no existe o no tienes permiso para borrarlo.');
+          return;
+        }
         this.products = this.products.filter(p => p.id !== id);
-      } else {
-        alert('Error al eliminar el producto');
+      } catch {
+        alert('No se pudo eliminar el producto. Revisa tu sesión e inténtalo otra vez.');
       }
     }
   }

@@ -9,7 +9,12 @@ export class SupabaseService {
   private supabase: SupabaseClient;
 
   constructor() {
-    // Inicializa el cliente de Supabase usando las credenciales del environment
+    if (!environment.supabaseUrl.startsWith('https://') || environment.supabaseUrl.includes('YOUR_PROJECT')) {
+      throw new Error('Configura SUPABASE_URL real en src/environments/environment.ts.');
+    }
+    if (!environment.supabaseKey || environment.supabaseKey.includes('YOUR_SUPABASE')) {
+      throw new Error('Configura la publishable key de Supabase en src/environments/environment.ts.');
+    }
     this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey);
   }
 
