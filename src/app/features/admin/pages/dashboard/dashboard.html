@@ -1,70 +1,77 @@
-<div class="dashboard-container">
-  <header class="dashboard-header">
-    <h1 class="dashboard-title">Panel de Control - Inventario</h1>
-    <a routerLink="/admin/nuevo-producto" class="btn btn-primary">
-      <span class="btn-icon">+</span> Añadir Producto
-    </a>
-    <button type="button" class="btn btn-logout" (click)="logout()">Cerrar sesión</button>
+<div class="container animate-fade-in" style="padding-top: var(--space-8); padding-bottom: var(--space-8);">
+  <header class="dashboard-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-8);">
+    <div>
+      <h1 class="dashboard-title" style="margin-bottom: var(--space-2);">Panel de Control</h1>
+      <p class="text-muted">Gestiona tu inventario de productos</p>
+    </div>
+    <div style="display: flex; gap: var(--space-4);">
+      <a routerLink="/admin/nuevo-producto">
+        <app-ui-button variant="accent" size="md">
+          + Añadir Producto
+        </app-ui-button>
+      </a>
+      <app-ui-button variant="ghost" size="md" (click)="logout()">
+        Cerrar sesión
+      </app-ui-button>
+    </div>
   </header>
 
-  <main class="dashboard-content">
-    <div class="table-responsive">
-      <table class="inventory-table">
-        <thead>
+  <main class="glass-card table-responsive" style="padding: 0; overflow: hidden;">
+    <table class="inventory-table" style="width: 100%; text-align: left; border-collapse: collapse;">
+      <thead style="background: rgba(0,0,0,0.03); border-bottom: 1px solid var(--color-border);">
+        <tr>
+          <th style="padding: var(--space-4); font-family: 'Cormorant', serif; font-size: 1.1rem;">ID</th>
+          <th style="padding: var(--space-4); font-family: 'Cormorant', serif; font-size: 1.1rem;">Producto</th>
+          <th style="padding: var(--space-4); font-family: 'Cormorant', serif; font-size: 1.1rem;">Categoría</th>
+          <th style="padding: var(--space-4); font-family: 'Cormorant', serif; font-size: 1.1rem;">Precio</th>
+          <th style="padding: var(--space-4); font-family: 'Cormorant', serif; font-size: 1.1rem;">Estado</th>
+          <th style="padding: var(--space-4); font-family: 'Cormorant', serif; font-size: 1.1rem;">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (isLoading) {
           <tr>
-            <th>ID</th>
-            <th>Producto</th>
-            <th>Categoría</th>
-            <th>Precio</th>
-            <th>Estado</th>
-            <th>Acciones</th>
+            <td colspan="6" style="padding: var(--space-8); text-align: center;">
+              <div class="skeleton" style="height: 40px; border-radius: var(--radius-sm); margin-bottom: 10px;"></div>
+              <div class="skeleton" style="height: 40px; border-radius: var(--radius-sm); margin-bottom: 10px;"></div>
+            </td>
           </tr>
-        </thead>
-        <tbody>
-          @if (isLoading) {
-            <tr>
-              <td colspan="6" class="empty-state">
-                Cargando inventario...
+        } @else {
+          @for (product of products; track product.id) {
+            <tr style="border-bottom: 1px solid var(--color-border); transition: background var(--transition-fast);" class="table-row">
+              <td style="padding: var(--space-4); color: var(--color-muted-foreground);">#{{ product.id | slice:0:8 }}</td>
+              <td style="padding: var(--space-4); display: flex; align-items: center; gap: var(--space-3);">
+                @if (product.imagenUrl) {
+                  <img [src]="product.imagenUrl" alt="Imagen" style="width: 40px; height: 40px; object-fit: cover; border-radius: var(--radius-sm);">
+                } @else {
+                  <div style="width: 40px; height: 40px; background: var(--color-muted); border-radius: var(--radius-sm);"></div>
+                }
+                <span style="font-weight: 500;">{{ product.nombre }}</span>
+              </td>
+              <td style="padding: var(--space-4);">{{ product.categoria }}</td>
+              <td style="padding: var(--space-4); font-weight: 600;">{{ product.precio | currency:'USD':'symbol':'1.2-2':'es-EC' }}</td>
+              <td style="padding: var(--space-4);">
+                <span [style.background]="product.estado === 'Activo' ? 'var(--color-success)' : 'var(--color-muted)'"
+                      [style.color]="product.estado === 'Activo' ? '#fff' : 'var(--color-foreground)'"
+                      style="padding: 4px 12px; border-radius: var(--radius-full); font-size: 0.75rem; font-weight: 600; text-transform: uppercase;">
+                  {{ product.estado }}
+                </span>
+              </td>
+              <td style="padding: var(--space-4);">
+                <button (click)="deleteProduct(product.id)" style="color: var(--color-destructive); font-size: 0.875rem; font-weight: 600; text-decoration: underline;">
+                  Eliminar
+                </button>
               </td>
             </tr>
-          } @else {
-            @for (product of products; track product.id) {
-              <tr>
-                <td class="col-id">#{{ product.id | slice:0:8 }}</td>
-                <td class="col-name">
-                  @if (product.imagenUrl) {
-                    <img [src]="product.imagenUrl" alt="Imagen" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px; margin-right: 10px; vertical-align: middle;">
-                  }
-                  {{ product.nombre }}
-                </td>
-                <td>{{ product.categoria }}</td>
-                <td class="col-price">${{ product.precio.toLocaleString('es-CO') }}</td>
-                <td>
-                  <span
-                    class="badge"
-                    [class.badge-active]="product.estado === 'Activo'"
-                    [class.badge-hidden]="product.estado === 'Oculto'"
-                  >
-                    {{ product.estado }}
-                  </span>
-                </td>
-                <td class="col-actions">
-                  <!-- Solo dejamos Eliminar por simplicidad en esta etapa, editar lo agregamos luego -->
-                  <button type="button" class="btn-action btn-delete" title="Eliminar producto" (click)="deleteProduct(product.id)">
-                    Eliminar
-                  </button>
-                </td>
-              </tr>
-            } @empty {
-              <tr>
-                <td colspan="6" class="empty-state">
-                  No hay productos disponibles en el inventario.
-                </td>
-              </tr>
-            }
+          } @empty {
+            <tr>
+              <td colspan="6" style="padding: var(--space-8); text-align: center; color: var(--color-muted-foreground);">
+                No hay productos disponibles en el inventario.
+              </td>
+            </tr>
           }
-        </tbody>
-      </table>
-    </div>
+        }
+      </tbody>
+    </table>
   </main>
 </div>

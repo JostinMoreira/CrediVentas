@@ -1,13 +1,16 @@
 import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ProductService } from '../../../../core/services/product';
 import { UploadService } from '../../../../core/services/upload';
+import { UiButtonComponent } from '../../../../shared/ui/ui-button/ui-button';
+import { UiInputComponent } from '../../../../shared/ui/ui-input/ui-input';
 
 @Component({
   selector: 'app-product-form',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, UiButtonComponent, UiInputComponent],
   templateUrl: './product-form.html',
   styleUrl: './product-form.scss'
 })

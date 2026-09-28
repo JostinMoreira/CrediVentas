@@ -1,0 +1,83 @@
+@use '../../../../styles/mixins' as *;
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  border: 1px solid transparent;
+  position: relative;
+  overflow: hidden;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.btn-sm { padding: var(--space-2) var(--space-4); font-size: 0.875rem; }
+.btn-md { padding: var(--space-3) var(--space-5); font-size: 1rem; }
+.btn-lg { padding: var(--space-4) var(--space-6); font-size: 1.125rem; border-radius: var(--radius-lg); }
+
+.btn-full { width: 100%; }
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+  &:hover:not(:disabled) { background-color: var(--color-secondary); }
+}
+
+.btn-accent {
+  background-color: var(--color-accent);
+  color: var(--color-on-accent);
+  &:hover:not(:disabled) { 
+    background-color: #854d05;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(161, 98, 7, 0.3);
+  }
+}
+
+.btn-glass {
+  @include liquid-glass;
+  color: var(--color-foreground);
+  &:hover:not(:disabled) {
+    background-color: rgba(255, 255, 255, 0.9);
+  }
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--color-primary);
+  &:hover:not(:disabled) {
+    background: var(--color-muted);
+  }
+}
+
+.spinner {
+  position: absolute;
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid currentColor;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.content {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  transition: opacity 0.2s;
+}
+
+.content.loading {
+  opacity: 0;
+}

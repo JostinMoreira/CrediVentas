@@ -3,13 +3,13 @@ import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Product, ProductService } from '../../../../core/services/product';
 import { environment } from '../../../../../environments/environment';
-import { Navbar } from '../../../../shared/components/navbar/navbar';
+import { NavbarComponent } from '../../../../shared/components/navbar/navbar';
 import { Footer } from '../../../../shared/components/footer/footer';
 
 @Component({
   selector: 'app-product-detail',
   standalone: true,
-  imports: [CurrencyPipe, RouterLink, Navbar, Footer],
+  imports: [CurrencyPipe, RouterLink, NavbarComponent, Footer],
   styleUrl: './product-detail.scss',
   templateUrl: './product-detail.html',
 })

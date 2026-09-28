@@ -1,15 +1,14 @@
-import { Component, inject } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
-import { AuthService } from '../../../core/services/auth';
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { UiButtonComponent } from '../../ui/ui-button/ui-button';
+import { UiInputComponent } from '../../ui/ui-input/ui-input';
 
 @Component({
-  standalone: true,
-  imports: [RouterLink, RouterLinkActive],
   selector: 'app-navbar',
-  styleUrl: './navbar.scss',
+  standalone: true,
+  imports: [CommonModule, RouterModule, UiButtonComponent, UiInputComponent],
   templateUrl: './navbar.html',
+  styleUrls: ['./navbar.scss']
 })
-export class Navbar {
-  private readonly auth = inject(AuthService);
-  async logout(): Promise<void> { await this.auth.signOut(); }
-}
+export class NavbarComponent { }

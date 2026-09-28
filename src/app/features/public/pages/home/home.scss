@@ -1,49 +1,83 @@
-.hero-section {
-    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1590483736622-398541ce1a3a?q=80&w=2070&auto=format&fit=crop') center/cover;
-    color: white;
-    text-align: center;
-    padding: 4rem 1rem;
-    margin-bottom: 2rem;
+@use '../../../../../styles/mixins' as *;
 
-    .hero-content h2 {
-        font-size: 2.5rem;
-        margin-bottom: 1rem;
-    }
-
-    .hero-content p {
-        font-size: 1.2rem;
-        color: #e0e0e0;
-    }
+.hero {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  padding: var(--space-12) 0;
+  
+  // A premium glassmorphic background blob
+  &::before {
+    content: '';
+    position: absolute;
+    top: -10%;
+    right: -5%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(161,98,7,0.15) 0%, rgba(250,250,249,0) 70%);
+    border-radius: 50%;
+    z-index: -1;
+  }
 }
 
-.catalog-section {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 2rem 4rem 2rem;
-
-    .section-header {
-        text-align: center;
-        margin-bottom: 3rem;
-
-        h3 {
-            font-size: 2rem;
-            color: #333;
-            margin-bottom: 0.5rem;
-        }
-
-        p {
-            color: #666;
-        }
-    }
-
-    /* La magia del Responsive Design */
-    .products-grid {
-        display: grid;
-        /* Esto hace que entren todas las tarjetas de 280px que quepan en la pantalla */
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 2rem;
-    }
+.hero-container {
+  display: flex;
+  flex-direction: column;
 }
-.catalog-message { grid-column: 1 / -1; padding: 36px 16px; color: #6f776e; text-align: center; }
-.product-link { display: block; min-width: 0; color: inherit; text-decoration: none; }
-.product-link app-product-card { height: 100%; }
+
+.hero-content {
+  max-width: 650px;
+}
+
+.badge {
+  display: inline-block;
+  padding: var(--space-1) var(--space-3);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: var(--space-6);
+}
+
+.hero-title {
+  margin-bottom: var(--space-4);
+}
+
+.hero-subtitle {
+  font-size: 1.125rem;
+  color: var(--color-muted-foreground);
+  margin-bottom: var(--space-8);
+  max-width: 500px;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.featured-section {
+  padding: var(--space-12) 0;
+}
+
+.section-title {
+  text-align: center;
+  margin-bottom: var(--space-10);
+}
+
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: var(--space-6);
+}
+
+.category-card {
+  @include hover-lift;
+  cursor: pointer;
+  .mt-4 { margin-top: var(--space-4); margin-bottom: 0; text-align: center; }
+}

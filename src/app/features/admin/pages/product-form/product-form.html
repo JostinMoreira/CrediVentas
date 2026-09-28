@@ -1,102 +1,87 @@
-<div class="form-container">
-  <div class="form-header">
-    <a routerLink="/admin" class="btn-back">
+<div class="container animate-fade-in" style="padding-top: var(--space-8); padding-bottom: var(--space-12); max-width: 800px;">
+  <div style="margin-bottom: var(--space-6);">
+    <a routerLink="/admin" style="display: inline-block; margin-bottom: var(--space-4); font-weight: 600;">
       ← Volver al panel
     </a>
+    <h1 style="margin-bottom: var(--space-2);">Añadir Producto</h1>
+    <p class="text-muted">Ingresa la información necesaria para publicar el producto en el catálogo digital.</p>
   </div>
 
-  <div class="card">
-    <h2 class="card-title">Gestión de Producto</h2>
-    <p class="card-subtitle">Ingresa la información necesaria para publicar el producto en el catálogo digital.</p>
-
-    <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="product-form">
+  <div class="glass-card">
+    <form [formGroup]="productForm" (ngSubmit)="onSubmit()" style="display: flex; flex-direction: column; gap: var(--space-6);">
+      
       <!-- Nombre del Producto -->
-      <div class="form-group">
-        <label for="nombre" class="form-label">Nombre del Producto</label>
-        <input
-          id="nombre"
-          type="text"
-          formControlName="nombre"
-          class="form-control"
-          [class.is-invalid]="isFieldInvalid('nombre')"
-          placeholder="Ej: Tractor Agrícola 75 HP / Nevera 400L"
-        />
-        @if (isFieldInvalid('nombre')) {
-          <span class="error-message">El nombre del producto es obligatorio.</span>
-        }
-      </div>
+      <app-ui-input
+        formControlName="nombre"
+        label="Nombre del Producto"
+        placeholder="Ej: Tractor Agrícola 75 HP / Nevera 400L"
+        [error]="isFieldInvalid('nombre') ? 'El nombre del producto es obligatorio.' : ''">
+      </app-ui-input>
 
       <!-- Categoría -->
-      <div class="form-group">
-        <label for="categoria" class="form-label">Categoría</label>
+      <div style="display: flex; flex-direction: column; gap: var(--space-2);">
+        <label for="categoria" class="input-label">Categoría</label>
         <select
           id="categoria"
           formControlName="categoria"
-          class="form-control"
-          [class.is-invalid]="isFieldInvalid('categoria')"
+          class="custom-select"
+          [class.has-error]="isFieldInvalid('categoria')"
         >
           <option value="" disabled>Selecciona una categoría</option>
           <option value="Maquinaria Agrícola">Maquinaria Agrícola</option>
           <option value="Electrodomésticos">Electrodomésticos</option>
+          <option value="Tecnología">Tecnología</option>
+          <option value="Hogar">Hogar</option>
         </select>
-        @if (isFieldInvalid('categoria')) {
-          <span class="error-message">Debes seleccionar una categoría.</span>
-        }
+        <span *ngIf="isFieldInvalid('categoria')" class="error-text">Debes seleccionar una categoría.</span>
       </div>
 
       <!-- Precio -->
-      <div class="form-group">
-        <label for="precio" class="form-label">Precio ($)</label>
-        <input
-          id="precio"
-          type="number"
-          formControlName="precio"
-          class="form-control"
-          [class.is-invalid]="isFieldInvalid('precio')"
-          placeholder="Ej: 3500000"
-        />
-        @if (isFieldInvalid('precio')) {
-          <span class="error-message">Ingresa un precio válido.</span>
-        }
-      </div>
+      <app-ui-input
+        formControlName="precio"
+        label="Precio ($)"
+        type="number"
+        placeholder="Ej: 3500000"
+        [error]="isFieldInvalid('precio') ? 'Ingresa un precio válido (mayor a 0).' : ''">
+      </app-ui-input>
 
       <!-- Estado -->
-      <div class="form-group">
-        <label for="estado" class="form-label">Estado</label>
+      <div style="display: flex; flex-direction: column; gap: var(--space-2);">
+        <label for="estado" class="input-label">Estado</label>
         <select
           id="estado"
           formControlName="estado"
-          class="form-control"
-          [class.is-invalid]="isFieldInvalid('estado')"
+          class="custom-select"
+          [class.has-error]="isFieldInvalid('estado')"
         >
           <option value="Activo">Activo</option>
           <option value="Oculto">Oculto</option>
         </select>
-        @if (isFieldInvalid('estado')) {
-          <span class="error-message">El estado es obligatorio.</span>
-        }
+        <span *ngIf="isFieldInvalid('estado')" class="error-text">El estado es obligatorio.</span>
       </div>
 
       <!-- Imagen del Producto (Archivo) -->
-      <div class="form-group">
-        <label for="imagen" class="form-label">Imagen del Producto</label>
-        <input
-          id="imagen"
-          type="file"
-          accept="image/*"
-          (change)="onFileSelected($event)"
-          class="form-control"
-        />
-        @if (!selectedFile && productForm.touched) {
-          <span class="error-message">Debes seleccionar una imagen.</span>
-        }
+      <div style="display: flex; flex-direction: column; gap: var(--space-2);">
+        <label for="imagen" class="input-label">Imagen del Producto</label>
+        <div class="file-drop-area">
+          <input
+            id="imagen"
+            type="file"
+            accept="image/*"
+            (change)="onFileSelected($event)"
+            style="width: 100%; padding: var(--space-3);"
+          />
+        </div>
+        <span *ngIf="!selectedFile && productForm.touched" class="error-text">Debes seleccionar una imagen.</span>
       </div>
 
+      <hr style="border: 0; border-top: 1px solid var(--color-border); margin: var(--space-4) 0;">
+
       <!-- Botón Submit -->
-      <div class="form-actions">
-        <button type="submit" class="btn-submit" [disabled]="isSubmitting">
-          {{ isSubmitting ? 'Guardando...' : 'Guardar Producto' }}
-        </button>
+      <div style="display: flex; justify-content: flex-end;">
+        <app-ui-button type="submit" variant="accent" size="lg" [isLoading]="isSubmitting">
+          Guardar Producto
+        </app-ui-button>
       </div>
     </form>
   </div>

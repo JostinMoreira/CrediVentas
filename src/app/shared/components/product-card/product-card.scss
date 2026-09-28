@@ -1,12 +1,71 @@
-:host { display: block; height: 100%; }
-.card { height: 100%; overflow: hidden; display: flex; flex-direction: column; border: 1px solid #e9e6de; border-radius: 14px; background: #fff; transition: transform .2s ease, box-shadow .2s ease; }
-.card:hover { transform: translateY(-3px); box-shadow: 0 14px 30px #24352a12; }
-.card-img-container { height: 210px; position: relative; overflow: hidden; background: #f3f1eb; }
-img { width: 100%; height: 100%; object-fit: cover; }
-.image-placeholder { height: 100%; display: grid; place-items: center; color: #899088; font-size: 13px; }
-.category-badge { position: absolute; top: 12px; left: 12px; padding: 6px 10px; border-radius: 999px; background: #fff; color: #315d49; font-size: 11px; font-weight: 700; }
-.card-content { flex: 1; display: flex; flex-direction: column; align-items: flex-start; padding: 18px; }
-.card-title { min-height: 44px; margin: 0 0 10px; color: #25342b; font-size: 16px; line-height: 1.4; }
-.card-price { margin: 0 0 18px; color: #bc6c3e; font-size: 19px; font-weight: 800; }
-.btn-whatsapp { width: 100%; margin-top: auto; box-sizing: border-box; padding: 12px; border-radius: 8px; background: #1f6848; color: white; text-align: center; text-decoration: none; font-size: 13px; font-weight: 700; }
-.btn-whatsapp:hover { background: #18543a; }
+@use '../../../../styles/mixins' as *;
+
+.card {
+  display: flex;
+  flex-direction: column;
+  padding: 0; // Override glass-card padding for edge-to-edge image
+  overflow: hidden;
+  height: 100%;
+  @include hover-lift;
+}
+
+.card-img-container {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  background-color: var(--color-muted);
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.image-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-muted-foreground);
+  font-size: 0.875rem;
+}
+
+.category-badge {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.card-content {
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.card-title {
+  margin-bottom: var(--space-2);
+  font-size: 1.125rem;
+}
+
+.card-price {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-accent);
+  margin-bottom: var(--space-4);
+  flex: 1;
+}
+
+.w-full {
+  width: 100%;
+  display: block;
+}

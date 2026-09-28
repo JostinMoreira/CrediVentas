@@ -1,1 +1,24 @@
-/* You can add global styles to this file, and also import other style files */
+/* ==========================================================================
+   CREDIVENTAS E-COMMERCE - LIQUID GLASS SYSTEM
+   ========================================================================== */
+
+@use './styles/variables' as *;
+@use './styles/mixins' as *;
+@use './styles/typography';
+@use './styles/components';
+@use './styles/animations';
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--color-background);
+  /* Liquid Glass background enhancement: subtle radial gradient for depth */
+  background-image: radial-gradient(circle at 50% 0%, #FFFFFF 0%, var(--color-background) 80%);
+  background-attachment: fixed;
+}

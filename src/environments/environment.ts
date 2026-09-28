@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  supabaseUrl: 'https://YOUR_PROJECT.supabase.co',
-  supabaseKey: 'YOUR_SUPABASE_PUBLISHABLE_KEY',
-  whatsappPhone: '593XXXXXXXXX'
+  supabaseUrl: 'https://gmzukzkyrburvhtjgfvb.supabase.co',
+  supabaseKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdtenVremt5cmJ1cnZodGpnZnZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxNTU4MzQsImV4cCI6MjEwNTczMTgzNH0.yd8NItQLH8e5lZajB82QN2JLPZ0Ua6GYn2sKEB5FgPY',
+  whatsappPhone: '593988767533'
 };

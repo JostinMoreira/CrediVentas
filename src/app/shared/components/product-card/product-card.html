@@ -1,17 +1,19 @@
-<article class="card">
+<article class="card glass-card">
   <div class="card-img-container">
     @if (product.imagenUrl) {
       <img [src]="product.imagenUrl" [alt]="product.nombre" loading="lazy">
     } @else {
-      <div class="image-placeholder">Imagen próximamente</div>
+      <div class="image-placeholder">No Image</div>
     }
     <span class="category-badge">{{ product.categoria }}</span>
   </div>
   <div class="card-content">
     <h4 class="card-title">{{ product.nombre }}</h4>
     <p class="card-price">{{ product.precio | currency:'USD':'symbol':'1.2-2':'es-EC' }}</p>
-    <a class="btn-whatsapp" [href]="whatsappUrl()" target="_blank" rel="noopener noreferrer" (click)="$event.stopPropagation()">
-      Pedir por WhatsApp
+    <a [href]="whatsappUrl()" target="_blank" rel="noopener noreferrer" (click)="$event.stopPropagation()" class="w-full">
+      <app-ui-button variant="accent" size="sm" [fullWidth]="true">
+        Pedir por WhatsApp
+      </app-ui-button>
     </a>
   </div>
 </article>

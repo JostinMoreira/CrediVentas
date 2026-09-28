@@ -1,10 +1,18 @@
-<header class="site-header">
-  <a class="brand" routerLink="/" aria-label="Crediventas Caminante, inicio">
-    <span class="brand-mark">CC</span>
-    <span class="brand-name">Crediventas <small>Caminante</small></span>
-  </a>
-  <nav aria-label="Navegación principal">
-    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Catálogo</a>
-    <a routerLink="/login" class="admin-link">Administración</a>
-  </nav>
-</header>
+<nav class="navbar glass-card">
+  <div class="container navbar-container">
+    <a routerLink="/" class="logo">
+      <span>Credi</span>Ventas
+    </a>
+    
+    <div class="search-bar">
+      <app-ui-input placeholder="Buscar productos..." type="search"></app-ui-input>
+    </div>
+
+    <div class="nav-actions">
+      <a routerLink="/admin/login" class="nav-link">Mi Cuenta</a>
+      <app-ui-button variant="accent" size="md">
+        Carrito (0)
+      </app-ui-button>
+    </div>
+  </div>
+</nav>

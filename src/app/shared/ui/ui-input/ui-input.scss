@@ -1,0 +1,61 @@
+@use '../../../../styles/mixins' as *;
+
+.input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.input-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  font-family: 'Montserrat', sans-serif;
+}
+
+.input-container {
+  position: relative;
+  width: 100%;
+}
+
+.input-field {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-card);
+  color: var(--color-foreground);
+  font-family: inherit;
+  font-size: 1rem;
+  transition: all var(--transition-fast);
+
+  &::placeholder {
+    color: var(--color-muted-foreground);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(161, 98, 7, 0.1);
+  }
+
+  &:disabled {
+    background: var(--color-muted);
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+}
+
+.has-error .input-field {
+  border-color: var(--color-destructive);
+  &:focus {
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+  }
+}
+
+.input-error {
+  font-size: 0.75rem;
+  color: var(--color-destructive);
+  margin-top: 2px;
+}

@@ -4,6 +4,7 @@ import localeEs from '@angular/common/locales/es';
 import { CurrencyPipe } from '@angular/common';
 import { Product } from '../../../core/services/product';
 import { environment } from '../../../../environments/environment';
+import { UiButtonComponent } from '../../ui/ui-button/ui-button';
 
 registerLocaleData(localeEs, 'es-EC');
 
@@ -11,7 +12,7 @@ registerLocaleData(localeEs, 'es-EC');
   selector: 'app-product-card',
   standalone: true,
   providers: [{ provide: LOCALE_ID, useValue: 'es-EC' }],
-  imports: [CurrencyPipe],
+  imports: [CurrencyPipe, UiButtonComponent],
   styleUrl: './product-card.scss',
   templateUrl: './product-card.html',
 })

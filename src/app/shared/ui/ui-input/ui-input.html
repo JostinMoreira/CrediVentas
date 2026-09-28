@@ -1,0 +1,16 @@
+<div class="input-wrapper" [class.has-error]="error">
+  <label *ngIf="label" [for]="id" class="input-label">{{ label }}</label>
+  <div class="input-container">
+    <input
+      [id]="id"
+      [type]="type"
+      [placeholder]="placeholder"
+      [value]="value"
+      [disabled]="disabled"
+      (input)="handleInput($event)"
+      (blur)="handleBlur()"
+      class="input-field"
+    />
+  </div>
+  <span *ngIf="error" class="input-error animate-slide-up">{{ error }}</span>
+</div>

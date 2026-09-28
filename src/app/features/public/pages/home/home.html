@@ -1,36 +1,56 @@
-<app-navbar />
-<app-navbar />
-<!-- Banner Principal -->
-<section class="hero-section">
-    <div class="hero-content">
-        <h2>Equipamos tu hogar y el campo ecuatoriano</h2>
-        <p>Electrodomésticos y maquinaria agropecuaria de alta calidad directo a tu puerta.</p>
-    </div>
-</section>
+<app-navbar></app-navbar>
 
-<!-- Catálogo de Productos -->
-<section class="catalog-section">
-    <div class="section-header">
-        <h3>Nuestro Catálogo</h3>
-        <p>Explora nuestras categorías y haz tu pedido por WhatsApp</p>
+<main class="animate-fade-in">
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container hero-container">
+      <div class="hero-content">
+        <span class="badge animate-slide-up">Nueva Colección</span>
+        <h1 class="hero-title animate-slide-up" style="animation-delay: 0.1s">
+          Eleva tu estilo con <br> calidad premium
+        </h1>
+        <p class="hero-subtitle animate-slide-up" style="animation-delay: 0.2s">
+          Descubre los mejores productos con financiamiento directo. Compra hoy, paga después con CrediVentas.
+        </p>
+        <div class="hero-actions animate-slide-up" style="animation-delay: 0.3s">
+          <app-ui-button variant="accent" size="lg">Explorar Catálogo</app-ui-button>
+          <app-ui-button variant="glass" size="lg">Saber Más</app-ui-button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Products Section -->
+  <section class="featured-section container">
+    <h2 class="section-title">Últimos Productos</h2>
+    
+    <div *ngIf="error" class="error-message glass-card" style="border-color: var(--color-destructive); text-align: center; color: var(--color-destructive);">
+      {{ error }}
+      <p style="font-size: 0.875rem; color: var(--color-foreground); margin-top: var(--space-2);">
+        Asegúrate de configurar los credenciales de Supabase en <code>src/environments/environment.ts</code>.
+      </p>
     </div>
 
-    <!-- Cuadrícula (Grid) -->
-    <div class="products-grid">
-        @if (isLoading) {
-          <p style="text-align: center; width: 100%; grid-column: 1 / -1;">Cargando catálogo...</p>
-        } @else if (loadError) {
-          <p class="catalog-message">No pudimos cargar el catálogo. Inténtalo de nuevo más tarde.</p>
-        } @else {
-          @for (product of products; track product.id) {
-            <a class="product-link" [routerLink]="['/producto', product.id]">
-              <app-product-card [product]="product"></app-product-card>
-            </a>
-          } @empty {
-            <p style="text-align: center; width: 100%; grid-column: 1 / -1;">No hay productos disponibles por el momento.</p>
-          }
-        }
+    <!-- Skeletons Loading -->
+    <div *ngIf="isLoading && !error" class="categories-grid">
+      <div class="glass-card category-card" *ngFor="let i of [1,2,3,4,5,6,7,8]" style="padding: 0; display: flex; flex-direction: column;">
+        <div class="skeleton" style="height: 200px; border-radius: var(--radius-md) var(--radius-md) 0 0;"></div>
+        <div style="padding: var(--space-4);">
+          <div class="skeleton" style="height: 24px; width: 70%; margin-bottom: 8px;"></div>
+          <div class="skeleton" style="height: 20px; width: 40%; margin-bottom: 16px;"></div>
+          <div class="skeleton" style="height: 36px; width: 100%; border-radius: 6px;"></div>
+        </div>
+      </div>
     </div>
-</section>
-<app-footer />
-<app-footer />
+
+    <!-- Real Products Grid -->
+    <div *ngIf="!isLoading && !error" class="categories-grid">
+      <app-product-card *ngFor="let product of products" [product]="product"></app-product-card>
+    </div>
+
+    <div *ngIf="!isLoading && !error && products.length === 0" style="text-align: center; color: var(--color-muted-foreground); margin-top: 40px;">
+      No hay productos disponibles por el momento.
+    </div>
+
+  </section>
+</main>

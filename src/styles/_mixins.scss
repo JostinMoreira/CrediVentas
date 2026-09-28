@@ -1,0 +1,36 @@
+// _mixins.scss
+@use "variables" as *;
+
+@mixin respond-to($breakpoint) {
+  @if map-has-key($breakpoints, $breakpoint) {
+    @media (min-width: map-get($breakpoints, $breakpoint)) {
+      @content;
+    }
+  }
+}
+
+// Liquid Glass Component Mixin
+@mixin liquid-glass {
+  background: var(--color-card);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+// Hover Lift Animation
+@mixin hover-lift {
+  transition: transform var(--transition-liquid), box-shadow var(--transition-liquid);
+  &:hover {
+    transform: translateY(-4px) scale(1.01);
+    box-shadow: 0 20px 40px 0 rgba(28, 25, 23, 0.1);
+  }
+}
+
+// Focus outline for accessibility
+@mixin focus-ring {
+  &:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+}

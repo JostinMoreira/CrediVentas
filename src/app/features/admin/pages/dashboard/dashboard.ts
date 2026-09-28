@@ -1,13 +1,19 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, LOCALE_ID } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Product, ProductService } from '../../../../core/services/product';
-import { SlicePipe } from '@angular/common';
+import { SlicePipe, CurrencyPipe } from '@angular/common';
 import { AuthService } from '../../../../core/services/auth';
+import { UiButtonComponent } from '../../../../shared/ui/ui-button/ui-button';
+
+import { registerLocaleData } from '@angular/common';
+import localeEs from '@angular/common/locales/es';
+registerLocaleData(localeEs, 'es-EC');
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [RouterLink, SlicePipe],
+  imports: [RouterLink, SlicePipe, CurrencyPipe, UiButtonComponent],
+  providers: [{ provide: LOCALE_ID, useValue: 'es-EC' }],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })
