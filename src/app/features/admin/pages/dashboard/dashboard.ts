@@ -1,9 +1,11 @@
-import { Component, OnInit, inject, LOCALE_ID } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, OnInit, OnDestroy, inject, LOCALE_ID, ChangeDetectorRef } from '@angular/core';
+import { Router, RouterLink, NavigationEnd } from '@angular/router';
 import { Product, ProductService } from '../../../../core/services/product';
 import { SlicePipe, CurrencyPipe } from '@angular/common';
 import { AuthService } from '../../../../core/services/auth';
 import { UiButtonComponent } from '../../../../shared/ui/ui-button/ui-button';
+import { filter } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 
 import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
@@ -17,15 +19,29 @@ registerLocaleData(localeEs, 'es-EC');
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })
-export class Dashboard implements OnInit {
+export class Dashboard implements OnInit, OnDestroy {
   products: Product[] = [];
   isLoading = true;
 
   private productService = inject(ProductService);
   private authService = inject(AuthService);
+  private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
+
+  private navigationSubscription: Subscription | null = null;
 
   async ngOnInit(): Promise<void> {
     await this.loadProducts();
+
+    this.navigationSubscription = this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd && event.url === '/admin')
+    ).subscribe(() => {
+      this.loadProducts();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.navigationSubscription?.unsubscribe();
   }
 
   async loadProducts(): Promise<void> {
@@ -33,10 +49,12 @@ export class Dashboard implements OnInit {
     try {
       const data = await this.productService.getAll();
       this.products = data;
-    } catch {
+    } catch (error) {
+      console.error('loadProducts ERROR:', error);
       alert('No se pudo cargar el inventario. Revisa tu conexión e inténtalo otra vez.');
     } finally {
       this.isLoading = false;
+      this.cdr.detectChanges();
     }
   }
 
