@@ -1,3 +1,11 @@
 .table-row:hover {
   background-color: rgba(0, 0, 0, 0.02);
 }
+
+.table-responsive { -webkit-overflow-scrolling: touch; }
+
+@media (max-width: 640px) {
+  .dashboard-header { align-items: stretch !important; flex-direction: column; gap: var(--space-4); }
+  .dashboard-actions { flex-wrap: wrap; gap: var(--space-2) !important; }
+  .dashboard-actions > a { flex: 1 1 180px; }
+}

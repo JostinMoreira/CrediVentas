@@ -69,4 +69,14 @@ export class UploadService {
       throw error;
     }
   }
+
+  async uploadProductImages(files: File[]): Promise<string[]> {
+    const urls: string[] = [];
+    for (const file of files) {
+      const url = await this.uploadProductImage(file);
+      if (!url) throw new Error('No se pudo subir una de las imágenes.');
+      urls.push(url);
+    }
+    return urls;
+  }
 }

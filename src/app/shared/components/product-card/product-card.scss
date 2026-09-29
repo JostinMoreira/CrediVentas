@@ -1,26 +1,38 @@
 @use '../../../../styles/mixins' as *;
 
+:host {
+  display: block;
+}
+
 .card {
   display: flex;
   flex-direction: column;
   padding: 0; // Override glass-card padding for edge-to-edge image
   overflow: hidden;
   height: 100%;
+  min-width: 0;
   @include hover-lift;
 }
 
 .card-img-container {
   position: relative;
   width: 100%;
-  height: 200px;
+  height: clamp(160px, 22vw, 220px);
   background-color: var(--color-muted);
   
   img {
+    display: block;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    padding: var(--space-3);
+    object-fit: contain;
+    object-position: center;
   }
 }
+
+.product-link { display: flex; flex-direction: column; flex: 1; color: inherit; text-decoration: none; }
+.details-link { align-self: flex-start; margin-bottom: var(--space-3); color: var(--color-primary); font-size: .9rem; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+.card-actions { padding-top: 0; }
 
 .image-placeholder {
   width: 100%;
@@ -55,6 +67,11 @@
 .card-title {
   margin-bottom: var(--space-2);
   font-size: 1.125rem;
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
 }
 
 .card-price {
@@ -68,4 +85,11 @@
 .w-full {
   width: 100%;
   display: block;
+}
+
+@media (max-width: 480px) {
+  .card-img-container { height: 176px; }
+  .card-content { padding: var(--space-3); }
+  .card-price { font-size: 1.1rem; }
+  .details-link { min-height: 44px; display: inline-flex; align-items: center; }
 }

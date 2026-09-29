@@ -18,6 +18,17 @@
         [error]="isFieldInvalid('nombre') ? 'El nombre del producto es obligatorio.' : ''">
       </app-ui-input>
 
+      <div style="display: flex; flex-direction: column; gap: var(--space-2);">
+        <label for="descripcion" class="input-label">Descripción</label>
+        <textarea id="descripcion" formControlName="descripcion" rows="4" class="text-area-field" placeholder="Describe el producto, su estado y beneficios."></textarea>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: var(--space-2);">
+        <label for="especificaciones" class="input-label">Especificaciones</label>
+        <textarea id="especificaciones" formControlName="especificacionesTexto" rows="5" class="text-area-field" placeholder="Marca: Ejemplo\nModelo: 2026\nColor: Negro"></textarea>
+        <span class="text-muted">Una por línea, con el formato Nombre: valor.</span>
+      </div>
+
       <!-- Categoría -->
       <div style="display: flex; flex-direction: column; gap: var(--space-2);">
         <label for="categoria" class="input-label">Categoría</label>
@@ -62,17 +73,19 @@
 
       <!-- Imagen del Producto (Archivo) -->
       <div style="display: flex; flex-direction: column; gap: var(--space-2);">
-        <label for="imagen" class="input-label">Imagen del Producto</label>
+        <label for="imagen" class="input-label">Imágenes del producto</label>
         <div class="file-drop-area">
           <input
             id="imagen"
             type="file"
             accept="image/*"
+            multiple
             (change)="onFileSelected($event)"
             style="width: 100%; padding: var(--space-3);"
           />
         </div>
-        <span *ngIf="!selectedFile && productForm.touched" class="error-text">Debes seleccionar una imagen.</span>
+        <span *ngIf="selectedFiles.length" class="text-muted">{{ selectedFiles.length }} imagen(es) seleccionada(s). La primera será la imagen principal.</span>
+        <span *ngIf="!selectedFiles.length && productForm.touched" class="error-text">Debes seleccionar al menos una imagen.</span>
       </div>
 
       <hr style="border: 0; border-top: 1px solid var(--color-border); margin: var(--space-4) 0;">

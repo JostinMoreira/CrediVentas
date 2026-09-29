@@ -8,6 +8,9 @@ export interface Product {
   precio: number;
   estado: string;
   imagenUrl?: string;
+  imagenes?: string[];
+  descripcion?: string;
+  especificaciones?: Record<string, string>;
 }
 
 export type ProductInput = Omit<Product, 'id'>;

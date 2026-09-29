@@ -1,5 +1,5 @@
 import { CurrencyPipe } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Product, ProductService } from '../../../../core/services/product';
 import { environment } from '../../../../../environments/environment';
@@ -16,12 +16,20 @@ import { Footer } from '../../../../shared/components/footer/footer';
 export class ProductDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly productsService = inject(ProductService);
-  product: Product | null = null;
-  isLoading = true;
+  product = signal<Product | null>(null);
+  isLoading = signal(true);
+  activeImageIndex = signal(0);
+  gallery = computed(() => {
+    const product = this.product();
+    return [...new Set([...(product?.imagenes ?? []), product?.imagenUrl].filter((url): url is string => !!url))];
+  });
+  activeImage = computed(() => this.gallery()[this.activeImageIndex()] ?? null);
+  specifications = computed(() => Object.entries(this.product()?.especificaciones ?? {}));
 
   get whatsappUrl(): string {
-    if (!this.product) return 'https://wa.me/';
-    const message = `Hola, me interesa ${this.product.nombre}. ¿Me pueden dar más información?`;
+    const product = this.product();
+    if (!product) return 'https://wa.me/';
+    const message = `Hola, me interesa ${product.nombre} (${new Intl.NumberFormat('es-EC', { style: 'currency', currency: 'USD' }).format(product.precio)}). ¿Me pueden dar más información?`;
     return `https://wa.me/${environment.whatsappPhone}?text=${encodeURIComponent(message)}`;
   }
 
@@ -29,9 +37,11 @@ export class ProductDetailComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     try {
       const products = await this.productsService.getAll();
-      this.product = products?.find(item => item.id === id && item.estado === 'Activo') ?? null;
+      this.product.set(products?.find(item => item.id === id && item.estado === 'Activo') ?? null);
+    } catch {
+      this.product.set(null);
     } finally {
-      this.isLoading = false;
+      this.isLoading.set(false);
     }
   }
 }

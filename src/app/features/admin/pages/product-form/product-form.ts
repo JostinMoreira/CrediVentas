@@ -16,7 +16,7 @@ import { UiInputComponent } from '../../../../shared/ui/ui-input/ui-input';
 })
 export class ProductFormComponent {
   productForm: FormGroup;
-  selectedFile: File | null = null;
+  selectedFiles: File[] = [];
   isSubmitting = false;
 
   private fb = inject(FormBuilder);
@@ -29,21 +29,21 @@ export class ProductFormComponent {
       nombre: ['', [Validators.required]],
       categoria: ['', [Validators.required]],
       precio: [null as number | null, [Validators.required, Validators.min(0.01)]],
-      estado: ['Activo', [Validators.required]]
+      estado: ['Activo', [Validators.required]],
+      descripcion: [''],
+      especificacionesTexto: ['']
     });
   }
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    if (file) {
-      if (!file.type.startsWith('image/')) {
-        alert('Selecciona un archivo de imagen válido.');
-        input.value = '';
-        return;
-      }
-      this.selectedFile = file;
+    const files = Array.from(input.files ?? []);
+    if (files.some(file => !file.type.startsWith('image/'))) {
+      alert('Selecciona solo archivos de imagen.');
+      input.value = '';
+      return;
     }
+    this.selectedFiles = files;
   }
 
   isFieldInvalid(fieldName: string): boolean {
@@ -52,17 +52,26 @@ export class ProductFormComponent {
   }
 
   async onSubmit(): Promise<void> {
-    if (this.productForm.valid && this.selectedFile) {
+    if (this.productForm.valid && this.selectedFiles.length) {
       this.isSubmitting = true;
       try {
-        // 1. Subir la imagen
-        const imagenUrl = await this.uploadService.uploadProductImage(this.selectedFile);
-        if (!imagenUrl) throw new Error('Storage no devolvió la URL de la imagen subida.');
+        const imagenes = await this.uploadService.uploadProductImages(this.selectedFiles);
+        const { especificacionesTexto, ...formValues } = this.productForm.value;
+        const especificaciones = String(especificacionesTexto ?? '')
+          .split('\n')
+          .map(line => line.trim())
+          .filter(Boolean)
+          .reduce<Record<string, string>>((result, line) => {
+            const separator = line.indexOf(':');
+            if (separator > 0) result[line.slice(0, separator).trim()] = line.slice(separator + 1).trim();
+            return result;
+          }, {});
 
-        // 2. Guardar en Supabase
         const productData = {
-          ...this.productForm.value,
-          imagenUrl: imagenUrl
+          ...formValues,
+          imagenUrl: imagenes[0],
+          imagenes,
+          especificaciones
         };
 
         await this.productService.create({
@@ -79,7 +88,7 @@ export class ProductFormComponent {
       }
     } else {
       this.productForm.markAllAsTouched();
-      if (!this.selectedFile) {
+      if (!this.selectedFiles.length) {
         alert('Por favor selecciona una imagen para el producto.');
       }
     }

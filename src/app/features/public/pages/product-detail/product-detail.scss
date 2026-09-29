@@ -2,12 +2,27 @@
 .detail-page { max-width: 1100px; margin: 0 auto; padding: 40px 24px; }
 .back-link { display: inline-block; margin-bottom: 24px; color: #315d49; text-decoration: none; font-weight: 700; }
 .detail-card { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(280px, .9fr); overflow: hidden; border: 1px solid #e9e6de; border-radius: 18px; background: white; }
-.detail-card img, .image-placeholder { width: 100%; min-height: 400px; max-height: 600px; object-fit: cover; background: #f0eee8; }
+.gallery, .detail-copy { min-width: 0; }
+.gallery { padding: 18px; background: #f0eee8; }
+.main-image, .image-placeholder { display: grid; place-items: center; width: 100%; min-height: 400px; max-height: 600px; background: #f0eee8; }
+.main-image img { display: block; width: 100%; max-height: 560px; object-fit: contain; object-position: center; }
+.thumbnails { display: flex; gap: 10px; overflow-x: auto; padding-top: 14px; }
+.thumbnail { flex: 0 0 76px; width: 76px; height: 76px; padding: 4px; border: 2px solid transparent; border-radius: 9px; background: white; cursor: pointer; }
+.thumbnail.selected { border-color: #315d49; }
+.thumbnail img { width: 100%; height: 100%; object-fit: contain; }
 .image-placeholder { display: grid; place-items: center; color: #899088; }
 .detail-copy { align-self: center; padding: clamp(24px, 5vw, 56px); }
 .category { color: #bc6c3e; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; }
 h1 { margin: 14px 0; color: #25342b; font-size: clamp(28px, 4vw, 42px); line-height: 1.15; }
-.price { margin: 22px 0 28px; color: #bc6c3e; font-size: 26px; font-weight: 800; }
+.price { margin: 22px 0 18px; color: #bc6c3e; font-size: 26px; font-weight: 800; }
+.description { margin: 0 0 24px; color: #68716a; line-height: 1.7; white-space: pre-line; }
 .whatsapp-link { display: inline-block; padding: 14px 20px; border-radius: 9px; background: #1f6848; color: white; text-decoration: none; font-weight: 700; }
+.specifications { margin-top: 24px; padding: clamp(22px, 4vw, 36px); border: 1px solid #e9e6de; border-radius: 18px; background: white; }
+.specifications h2 { margin: 0 0 18px; color: #25342b; }
+.specifications dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; margin: 0; overflow: hidden; border: 1px solid #ece9e2; border-radius: 10px; background: #ece9e2; }
+.specifications dl div { padding: 14px 16px; background: #fff; }
+.specifications dt { color: #68716a; font-size: .82rem; }
+.specifications dd { margin: 5px 0 0; color: #25342b; font-weight: 700; overflow-wrap: anywhere; }
 .detail-message { padding: 60px 12px; color: #68716a; text-align: center; }
-@media (max-width: 700px) { .detail-page { padding: 24px 16px; } .detail-card { grid-template-columns: 1fr; } .detail-card img, .image-placeholder { min-height: 260px; max-height: 380px; } }
+@media (max-width: 700px) { .detail-page { padding: 24px 16px; } .detail-card { grid-template-columns: 1fr; } .gallery { padding: 12px; } .main-image, .image-placeholder { min-height: 240px; max-height: 380px; } .main-image img { max-height: 340px; } .detail-copy { padding: 24px 20px; } .whatsapp-link { display: flex; min-height: 48px; align-items: center; justify-content: center; text-align: center; } .specifications dl { grid-template-columns: 1fr; } }
+@media (max-width: 360px) { .detail-page { padding-inline: 12px; } .detail-copy { padding-inline: 16px; } .specifications { padding: 18px 14px; } }

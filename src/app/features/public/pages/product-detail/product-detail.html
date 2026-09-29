@@ -1,22 +1,44 @@
 <app-navbar />
 <main class="detail-page">
   <a routerLink="/" class="back-link">← Volver al catálogo</a>
-  @if (isLoading) {
+  @if (isLoading()) {
     <p class="detail-message">Cargando producto…</p>
-  } @else if (product) {
+  } @else if (product(); as product) {
     <article class="detail-card">
-      @if (product.imagenUrl) {
-        <img [src]="product.imagenUrl" [alt]="product.nombre">
+      <div class="gallery">
+      @if (activeImage(); as image) {
+        <div class="main-image"><img [src]="image" [alt]="product.nombre"></div>
       } @else {
         <div class="image-placeholder">Imagen próximamente</div>
       }
+      @if (gallery().length > 1) {
+        <div class="thumbnails" aria-label="Más imágenes del producto">
+          @for (image of gallery(); track image; let index = $index) {
+            <button type="button" class="thumbnail" [class.selected]="activeImageIndex() === index" [attr.aria-label]="'Ver imagen ' + (index + 1)" [attr.aria-pressed]="activeImageIndex() === index" (click)="activeImageIndex.set(index)">
+              <img [src]="image" [alt]="product.nombre + ' imagen ' + (index + 1)">
+            </button>
+          }
+        </div>
+      }
+      </div>
       <div class="detail-copy">
         <span class="category">{{ product.categoria }}</span>
         <h1>{{ product.nombre }}</h1>
         <p class="price">{{ product.precio | currency:'USD':'symbol':'1.2-2':'es-EC' }}</p>
+        @if (product.descripcion) { <p class="description">{{ product.descripcion }}</p> }
         <a class="whatsapp-link" [href]="whatsappUrl" target="_blank" rel="noopener noreferrer">Consultar por WhatsApp</a>
       </div>
     </article>
+    @if (specifications().length) {
+      <section class="specifications" aria-labelledby="specifications-title">
+        <h2 id="specifications-title">Especificaciones</h2>
+        <dl>
+          @for (specification of specifications(); track specification[0]) {
+            <div><dt>{{ specification[0] }}</dt><dd>{{ specification[1] }}</dd></div>
+          }
+        </dl>
+      </section>
+    }
   } @else {
     <p class="detail-message">No encontramos este producto o ya no está disponible.</p>
   }

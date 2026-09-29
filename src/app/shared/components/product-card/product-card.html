@@ -1,4 +1,5 @@
 <article class="card glass-card">
+  <a class="product-link" [routerLink]="['/producto', product.id]" [attr.aria-label]="'Ver detalles de ' + product.nombre">
   <div class="card-img-container">
     @if (product.imagenUrl) {
       <img [src]="product.imagenUrl" [alt]="product.nombre" loading="lazy">
@@ -10,6 +11,10 @@
   <div class="card-content">
     <h4 class="card-title">{{ product.nombre }}</h4>
     <p class="card-price">{{ product.precio | currency:'USD':'symbol':'1.2-2':'es-EC' }}</p>
+  </div>
+  </a>
+  <div class="card-content card-actions">
+    <a class="details-link" [routerLink]="['/producto', product.id]">Ver producto</a>
     <a [href]="whatsappUrl()" target="_blank" rel="noopener noreferrer" (click)="$event.stopPropagation()" class="w-full">
       <app-ui-button variant="accent" size="sm" [fullWidth]="true">
         Pedir por WhatsApp
