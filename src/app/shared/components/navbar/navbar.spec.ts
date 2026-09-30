@@ -1,22 +1,22 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Navbar } from './navbar';
+import { NavbarComponent } from './navbar';
 import { AuthService } from '../../../core/services/auth';
 import { ActivatedRoute } from '@angular/router';
 
-describe('Navbar', () => {
-  let component: Navbar;
-  let fixture: ComponentFixture<Navbar>;
+describe('NavbarComponent', () => {
+  let component: NavbarComponent;
+  let fixture: ComponentFixture<NavbarComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Navbar],
+      imports: [NavbarComponent],
       providers: [
         { provide: AuthService, useValue: { signOut: vi.fn() } },
         { provide: ActivatedRoute, useValue: { snapshot: { params: {}, queryParams: {}, data: {} } } },
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(Navbar);
+    fixture = TestBed.createComponent(NavbarComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

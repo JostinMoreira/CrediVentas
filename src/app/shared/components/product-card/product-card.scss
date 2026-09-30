@@ -31,7 +31,19 @@
 }
 
 .product-link { display: flex; flex-direction: column; flex: 1; color: inherit; text-decoration: none; }
-.details-link { align-self: flex-start; margin-bottom: var(--space-3); color: var(--color-primary); font-size: .9rem; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+.details-link { 
+  align-self: flex-start; 
+  margin-bottom: var(--space-3); 
+  color: var(--color-accent); 
+  font-size: .9rem; 
+  font-weight: 700; 
+  text-decoration: underline; 
+  text-underline-offset: 3px;
+  transition: color var(--transition-fast);
+  &:hover {
+    color: var(--color-accent-hover);
+  }
+}
 .card-actions { padding-top: 0; }
 
 .image-placeholder {
@@ -53,7 +65,8 @@
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-sm);
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
@@ -67,6 +80,8 @@
 .card-title {
   margin-bottom: var(--space-2);
   font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-foreground);
   overflow-wrap: anywhere;
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -75,9 +90,9 @@
 }
 
 .card-price {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--color-accent);
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--color-primary);
   margin-bottom: var(--space-4);
   flex: 1;
 }

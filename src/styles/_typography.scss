@@ -11,18 +11,18 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Cormorant', Georgia, serif;
-  color: var(--color-primary);
-  font-weight: 600;
+  font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
+  color: var(--color-foreground);
+  font-weight: 700;
   line-height: 1.2;
   margin-top: 0;
   margin-bottom: var(--space-4);
 }
 
-h1 { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 700; }
-h2 { font-size: clamp(2rem, 4vw, 3rem); }
-h3 { font-size: clamp(1.5rem, 3vw, 2.25rem); }
-h4 { font-size: 1.25rem; font-family: 'Montserrat', sans-serif; font-weight: 600; }
+h1 { font-size: clamp(2.25rem, 5vw, 3.5rem); font-weight: 800; }
+h2 { font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 700; }
+h3 { font-size: clamp(1.35rem, 3vw, 1.85rem); font-weight: 700; }
+h4 { font-size: 1.15rem; font-weight: 600; }
 
 p {
   margin-top: 0;

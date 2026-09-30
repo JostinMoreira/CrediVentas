@@ -1,23 +1,29 @@
 // _variables.scss
 :root {
-  // Colors - Liquid Glass Premium Palette
-  --color-primary: #1C1917;
-  --color-on-primary: #FFFFFF;
-  --color-secondary: #44403C;
+  // Colors - CrediVentas (Rojo, Blanco y Celeste) Palette
+  --color-primary: #DC2626;         // Rojo vibrante corporativo
+  --color-primary-hover: #B91C1C;   // Rojo oscuro para hover/active
+  --color-on-primary: #FFFFFF;      // Blanco sobre rojo
+
+  --color-secondary: #0284C7;       // Celeste corporativo equilibrado
+  --color-secondary-hover: #0369A1; // Celeste profundo para hover
   --color-on-secondary: #FFFFFF;
-  --color-accent: #A16207; // Gold
+
+  --color-accent: #0284C7;          // Celeste de acción / destacados
+  --color-accent-hover: #0369A1;
+  --color-accent-light: #E0F2FE;    // Celeste claro sutil
   --color-on-accent: #FFFFFF;
   
-  --color-background: #FAFAF9;
-  --color-foreground: #0C0A09;
+  --color-background: #F8FAFC;      // Blanco base limpio
+  --color-foreground: #0F172A;      // Slate profundo para máxima legibilidad
   
-  --color-card: rgba(255, 255, 255, 0.7); // Translucency for liquid glass
-  --color-card-foreground: #0C0A09;
+  --color-card: rgba(255, 255, 255, 0.88); // Liquid Glass blanco translúcido
+  --color-card-foreground: #0F172A;
   
-  --color-muted: #E8ECF0;
-  --color-muted-foreground: #475569;
-  --color-border: rgba(214, 211, 209, 0.5); // Semi-transparent borders
-  --color-ring: #1C1917;
+  --color-muted: #F1F5F9;           // Fondo tenue / neutro claro
+  --color-muted-foreground: #64748B;// Texto secundario accesible
+  --color-border: rgba(226, 232, 240, 0.85); // Borde suave
+  --color-ring: #0284C7;            // Foco celeste accesible
 
   // Status
   --color-destructive: #DC2626;
@@ -43,8 +49,8 @@
 
   // Liquid Glass Specific Effects
   --glass-blur: blur(12px);
-  --glass-shadow: 0 8px 32px 0 rgba(28, 25, 23, 0.07);
-  --glass-border: 1px solid rgba(255, 255, 255, 0.5);
+  --glass-shadow: 0 8px 30px 0 rgba(15, 23, 42, 0.06);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.8);
 
   // Transitions
   --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);

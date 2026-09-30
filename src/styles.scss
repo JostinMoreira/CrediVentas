@@ -19,7 +19,7 @@ html, body {
   min-height: 100vh;
   background-color: var(--color-background);
   /* Liquid Glass background enhancement: subtle radial gradient for depth */
-  background-image: radial-gradient(circle at 50% 0%, #FFFFFF 0%, var(--color-background) 80%);
+  background-image: radial-gradient(circle at 50% 0%, #FFFFFF 0%, #F0F9FF 50%, var(--color-background) 100%);
   background-attachment: fixed;
 }
 
