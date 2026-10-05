@@ -1,1 +1,4 @@
+@if (errors.hasUnhandledError()) {
+  <div class="application-error" role="alert"><span>Ocurrió un error inesperado. Recarga la página para continuar.</span><button class="button-link" (click)="errors.reload()">Recargar</button></div>
+}
 <router-outlet />

@@ -1,81 +1,63 @@
-import { Component, OnInit, OnDestroy, inject, LOCALE_ID, ChangeDetectorRef } from '@angular/core';
-import { Router, RouterLink, NavigationEnd } from '@angular/router';
+import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { CurrencyPipe } from '@angular/common';
 import { Product, ProductService } from '../../../../core/services/product';
-import { SlicePipe, CurrencyPipe } from '@angular/common';
+import { productImages } from '../../../../core/models/product';
 import { AuthService } from '../../../../core/services/auth';
+import { UploadService } from '../../../../core/services/upload';
 import { UiButtonComponent } from '../../../../shared/ui/ui-button/ui-button';
-import { filter } from 'rxjs/operators';
-import { Subscription } from 'rxjs';
-
-import { registerLocaleData } from '@angular/common';
-import localeEs from '@angular/common/locales/es';
-registerLocaleData(localeEs, 'es-EC');
 
 @Component({
-  selector: 'app-dashboard',
-  standalone: true,
-  imports: [RouterLink, SlicePipe, CurrencyPipe, UiButtonComponent],
-  providers: [{ provide: LOCALE_ID, useValue: 'es-EC' }],
-  templateUrl: './dashboard.html',
-  styleUrl: './dashboard.scss'
+  selector: 'app-dashboard', standalone: true,
+  imports: [RouterLink, CurrencyPipe, UiButtonComponent],
+  templateUrl: './dashboard.html', styleUrl: './dashboard.scss',
 })
-export class Dashboard implements OnInit, OnDestroy {
-  products: Product[] = [];
-  isLoading = true;
+export class Dashboard implements OnInit {
+  readonly products = signal<Product[]>([]);
+  readonly isLoading = signal(true);
+  readonly error = signal('');
+  readonly notice = signal('');
+  readonly deletingId = signal<string | null>(null);
+  readonly page = signal(0);
+  readonly total = signal(0);
+  readonly pageSize = 20;
+  readonly uploads = inject(UploadService);
+  private readonly productService = inject(ProductService);
+  private readonly auth = inject(AuthService);
+  private readonly destroyRef = inject(DestroyRef);
+  private request = 0;
 
-  private productService = inject(ProductService);
-  private authService = inject(AuthService);
-  private router = inject(Router);
-  private cdr = inject(ChangeDetectorRef);
-
-  private navigationSubscription: Subscription | null = null;
-
-  async ngOnInit(): Promise<void> {
-    await this.loadProducts();
-
-    this.navigationSubscription = this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd && event.url === '/admin')
-    ).subscribe(() => {
-      this.loadProducts();
-    });
-  }
-
-  ngOnDestroy(): void {
-    this.navigationSubscription?.unsubscribe();
-  }
-
+  ngOnInit(): void { void this.loadProducts(); }
   async loadProducts(): Promise<void> {
-    this.isLoading = true;
+    const request = ++this.request;
+    this.isLoading.set(true); this.error.set('');
     try {
-      const data = await this.productService.getAll();
-      this.products = data;
-    } catch (error) {
-      console.error('loadProducts ERROR:', error);
-      alert('No se pudo cargar el inventario. Revisa tu conexión e inténtalo otra vez.');
-    } finally {
-      this.isLoading = false;
-      this.cdr.detectChanges();
-    }
+      const result = await this.productService.getPage({ page: this.page(), pageSize: this.pageSize, publicOnly: false });
+      if (this.destroyRef.destroyed || request !== this.request) return;
+      if (!result.products.length && this.page() > 0) { this.page.update(value => value - 1); return await this.loadProducts(); }
+      this.products.set(result.products); this.total.set(result.total);
+    } catch { if (!this.destroyRef.destroyed) this.error.set('No se pudo cargar el inventario. Revisa tu conexión e inténtalo de nuevo.'); }
+    finally { if (!this.destroyRef.destroyed && request === this.request) this.isLoading.set(false); }
   }
-
-  async deleteProduct(id: string | undefined): Promise<void> {
-    if (!id) return;
-    const confirmed = confirm('¿Estás seguro de eliminar este producto?');
-    if (confirmed) {
-      try {
-        const deleted = await this.productService.delete(id);
-        if (!deleted) {
-          alert('El producto ya no existe o no tienes permiso para borrarlo.');
-          return;
-        }
-        this.products = this.products.filter(p => p.id !== id);
-      } catch {
-        alert('No se pudo eliminar el producto. Revisa tu sesión e inténtalo otra vez.');
-      }
-    }
+  changePage(delta: number): void {
+    if (this.isLoading()) return;
+    this.page.update(value => Math.max(0, value + delta)); void this.loadProducts();
   }
-
+  async deleteProduct(product: Product): Promise<void> {
+    if (this.deletingId() || !confirm('¿Eliminar «' + product.nombre + '» del catálogo?')) return;
+    this.deletingId.set(product.id); this.error.set(''); this.notice.set('');
+    try {
+      if (!await this.productService.delete(product.id)) throw new Error('No se pudo confirmar el borrado.');
+      this.products.update(products => products.filter(item => item.id !== product.id));
+      this.total.update(total => Math.max(0, total - 1));
+      this.notice.set('Producto eliminado.');
+      await this.uploads.removeUnreferencedImages(productImages(product));
+      await this.loadProducts();
+    } catch { this.error.set('No se pudo eliminar el producto. Actualiza el inventario antes de reintentar.'); }
+    finally { this.deletingId.set(null); }
+  }
   async logout(): Promise<void> {
-    await this.authService.signOut();
+    try { await this.auth.signOut(); }
+    catch { this.error.set('No se pudo cerrar la sesión. Revisa tu conexión e inténtalo de nuevo.'); }
   }
 }

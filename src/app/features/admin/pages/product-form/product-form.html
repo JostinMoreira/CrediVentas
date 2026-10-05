@@ -1,101 +1,68 @@
-<div class="container animate-fade-in" style="padding-top: var(--space-8); padding-bottom: var(--space-12); max-width: 800px;">
-  <div style="margin-bottom: var(--space-6);">
-    <a routerLink="/admin" style="display: inline-block; margin-bottom: var(--space-4); font-weight: 600;">
-      ← Volver al panel
-    </a>
-    <h1 style="margin-bottom: var(--space-2);">Añadir Producto</h1>
-    <p class="text-muted">Ingresa la información necesaria para publicar el producto en el catálogo digital.</p>
-  </div>
-
-  <div class="glass-card">
-    <form [formGroup]="productForm" (ngSubmit)="onSubmit()" style="display: flex; flex-direction: column; gap: var(--space-6);">
-      
-      <!-- Nombre del Producto -->
-      <app-ui-input
-        formControlName="nombre"
-        label="Nombre del Producto"
-        placeholder="Ej: Tractor Agrícola 75 HP / Nevera 400L"
-        [error]="isFieldInvalid('nombre') ? 'El nombre del producto es obligatorio.' : ''">
-      </app-ui-input>
-
-      <div style="display: flex; flex-direction: column; gap: var(--space-2);">
-        <label for="descripcion" class="input-label">Descripción</label>
-        <textarea id="descripcion" formControlName="descripcion" rows="4" class="text-area-field" placeholder="Describe el producto, su estado y beneficios."></textarea>
-      </div>
-
-      <div style="display: flex; flex-direction: column; gap: var(--space-2);">
-        <label for="especificaciones" class="input-label">Especificaciones</label>
-        <textarea id="especificaciones" formControlName="especificacionesTexto" rows="5" class="text-area-field" placeholder="Marca: Ejemplo\nModelo: 2026\nColor: Negro"></textarea>
-        <span class="text-muted">Una por línea, con el formato Nombre: valor.</span>
-      </div>
-
-      <!-- Categoría -->
-      <div style="display: flex; flex-direction: column; gap: var(--space-2);">
-        <label for="categoria" class="input-label">Categoría</label>
-        <select
-          id="categoria"
-          formControlName="categoria"
-          class="custom-select"
-          [class.has-error]="isFieldInvalid('categoria')"
-        >
-          <option value="" disabled>Selecciona una categoría</option>
-          <option value="Maquinaria Agrícola">Maquinaria Agrícola</option>
-          <option value="Electrodomésticos">Electrodomésticos</option>
-          <option value="Tecnología">Tecnología</option>
-          <option value="Hogar">Hogar</option>
-        </select>
-        <span *ngIf="isFieldInvalid('categoria')" class="error-text">Debes seleccionar una categoría.</span>
-      </div>
-
-      <!-- Precio -->
-      <app-ui-input
-        formControlName="precio"
-        label="Precio ($)"
-        type="number"
-        placeholder="Ej: 3500000"
-        [error]="isFieldInvalid('precio') ? 'Ingresa un precio válido (mayor a 0).' : ''">
-      </app-ui-input>
-
-      <!-- Estado -->
-      <div style="display: flex; flex-direction: column; gap: var(--space-2);">
-        <label for="estado" class="input-label">Estado</label>
-        <select
-          id="estado"
-          formControlName="estado"
-          class="custom-select"
-          [class.has-error]="isFieldInvalid('estado')"
-        >
-          <option value="Activo">Activo</option>
-          <option value="Oculto">Oculto</option>
-        </select>
-        <span *ngIf="isFieldInvalid('estado')" class="error-text">El estado es obligatorio.</span>
-      </div>
-
-      <!-- Imagen del Producto (Archivo) -->
-      <div style="display: flex; flex-direction: column; gap: var(--space-2);">
-        <label for="imagen" class="input-label">Imágenes del producto</label>
-        <div class="file-drop-area">
-          <input
-            id="imagen"
-            type="file"
-            accept="image/*"
-            multiple
-            (change)="onFileSelected($event)"
-            style="width: 100%; padding: var(--space-3);"
-          />
+<main class="container product-form-page">
+  <a class="text-link" routerLink="/admin">← Volver al panel</a>
+  <h1>{{ isEditMode() ? 'Editar producto' : 'Añadir producto' }}</h1>
+  <p class="text-muted">Describe el artículo y elige cómo se mostrará en el catálogo.</p>
+  @if (isLoadingProduct()) {
+    <p class="message" role="status">Cargando producto…</p>
+  } @else if (loadError()) {
+    <div class="message error" role="alert"><p>{{ loadError() }}</p><button class="button-link" (click)="loadProduct()">Reintentar</button></div>
+  } @else {
+    <form class="product-form" [formGroup]="productForm" (ngSubmit)="onSubmit()" [attr.aria-busy]="isSubmitting()">
+      <fieldset [disabled]="isSubmitting()">
+        <legend class="sr-only">Información del producto</legend>
+        <app-ui-input formControlName="nombre" id="nombre" label="Nombre del producto" placeholder="Ej.: Refrigeradora de 400 litros" [maxlength]="limits.name" [error]="isFieldInvalid('nombre') ? 'Ingresa un nombre de hasta 160 caracteres.' : ''" />
+        <div class="field">
+          <label for="descripcion">Descripción</label>
+          <textarea id="descripcion" formControlName="descripcion" rows="4" [attr.maxlength]="limits.description" [attr.aria-invalid]="isFieldInvalid('descripcion')" aria-describedby="descripcion-help"></textarea>
+          <small id="descripcion-help">Máximo 5000 caracteres. Incluye características, condiciones y beneficios reales.</small>
         </div>
-        <span *ngIf="selectedFiles.length" class="text-muted">{{ selectedFiles.length }} imagen(es) seleccionada(s). La primera será la imagen principal.</span>
-        <span *ngIf="!selectedFiles.length && productForm.touched" class="error-text">Debes seleccionar al menos una imagen.</span>
-      </div>
-
-      <hr style="border: 0; border-top: 1px solid var(--color-border); margin: var(--space-4) 0;">
-
-      <!-- Botón Submit -->
-      <div style="display: flex; justify-content: flex-end;">
-        <app-ui-button type="submit" variant="accent" size="lg" [isLoading]="isSubmitting">
-          Guardar Producto
-        </app-ui-button>
+        <div class="field">
+          <label for="especificaciones">Especificaciones técnicas</label>
+          <textarea id="especificaciones" formControlName="especificacionesTexto" rows="5" placeholder="Marca: Ejemplo&#10;Capacidad: 400 litros" [attr.aria-invalid]="!!specificationError()" aria-describedby="especificaciones-help especificaciones-error"></textarea>
+          <small id="especificaciones-help">Una por línea: Nombre: Valor. Máximo 40, sin nombres repetidos.</small>
+          <span id="especificaciones-error" class="error-text">{{ specificationError() }}</span>
+        </div>
+        <div class="field">
+          <label for="categoria">Categoría</label>
+          <input id="categoria" class="input-field" list="categorias-sugeridas" formControlName="categoria" [attr.maxlength]="limits.category" placeholder="Elige o escribe una categoría" [attr.aria-invalid]="isFieldInvalid('categoria')" [attr.aria-describedby]="isFieldInvalid('categoria') ? 'categoria-error' : null">
+          <datalist id="categorias-sugeridas"><option>Maquinaria Agrícola</option><option>Electrodomésticos</option><option>Tecnología</option><option>Hogar</option></datalist>
+          @if (isFieldInvalid('categoria')) { <span class="error-text" id="categoria-error">Ingresa una categoría de hasta 80 caracteres.</span> }
+        </div>
+        <app-ui-input formControlName="precio" id="precio" label="Precio en dólares" type="number" step="0.01" min="0.01" max="999999999.99" placeholder="Ej.: 499.99" [error]="isFieldInvalid('precio') ? 'Ingresa un precio mayor que cero.' : ''" />
+        <div class="field">
+          <label for="estado">Estado</label>
+          <select id="estado" formControlName="estado"><option value="Activo">Activo: visible en el catálogo</option><option value="Oculto">Oculto: fuera del catálogo</option></select>
+        </div>
+        @if (productService.editorialAvailable()) {
+          <label class="checkbox-field"><input type="checkbox" formControlName="destacado"> Mostrar en productos destacados</label>
+        }
+        @if (existingImages().length) {
+          <div class="field"><span class="input-label">Imágenes guardadas</span>
+            <div class="existing-images-grid">
+              @for (image of existingImages(); track image; let index = $index) {
+                <div class="existing-image-item">
+                  <img [src]="image" [alt]="'Imagen ' + (index + 1)" width="120" height="120">
+                  <button type="button" class="remove-img-btn" [attr.aria-label]="'Retirar imagen ' + (index + 1)" (click)="removeExistingImage(index)">×</button>
+                  @if (index === 0) { <span class="main-badge">Principal</span> }
+                </div>
+              }
+            </div>
+            <small>Los cambios en imágenes se aplican al guardar. La primera será la principal.</small>
+          </div>
+        }
+        <div class="field">
+          <label for="imagen">{{ isEditMode() ? 'Agregar imágenes' : 'Imágenes del producto' }}</label>
+          <input id="imagen" type="file" [accept]="imageTypes" multiple (change)="onFileSelected($event)" aria-describedby="imagen-help">
+          <small id="imagen-help">JPEG, PNG, WebP o AVIF. Hasta 20 MB por archivo y 10 imágenes en total.</small>
+          @if (selectedFiles().length) { <small>{{ selectedFiles().length }} imágenes seleccionadas.</small> }
+        </div>
+      </fieldset>
+      @if (error()) { <p class="message error" role="alert">{{ error() }}</p> }
+      <p class="save-status" role="status">{{ status() }}</p>
+      <div class="form-actions">
+        <a class="button-link" routerLink="/admin" [attr.aria-disabled]="isSubmitting()" (click)="isSubmitting() && $event.preventDefault()">Cancelar</a>
+        <app-ui-button type="submit" variant="primary" size="lg" [isLoading]="isSubmitting()">{{ isEditMode() ? 'Guardar cambios' : 'Crear producto' }}</app-ui-button>
       </div>
     </form>
-  </div>
-</div>
+  }
+</main>

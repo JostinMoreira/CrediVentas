@@ -1,77 +1,45 @@
-<div class="container animate-fade-in" style="padding-top: var(--space-8); padding-bottom: var(--space-8);">
-  <header class="dashboard-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-8);">
-    <div>
-      <h1 class="dashboard-title" style="margin-bottom: var(--space-2);">Panel de Control</h1>
-      <p class="text-muted">Gestiona tu inventario de productos</p>
-    </div>
-    <div class="dashboard-actions" style="display: flex; gap: var(--space-4);">
-      <a routerLink="/admin/nuevo-producto">
-        <app-ui-button variant="accent" size="md">
-          + Añadir Producto
-        </app-ui-button>
-      </a>
-      <app-ui-button variant="ghost" size="md" (click)="logout()">
-        Cerrar sesión
-      </app-ui-button>
+<main class="container dashboard-page">
+  <header class="dashboard-header">
+    <div><a class="text-link" routerLink="/">← Ver catálogo</a><h1>Panel de control</h1><p class="text-muted">Gestiona tu inventario de productos.</p></div>
+    <div class="dashboard-actions">
+      <a class="button-link primary" routerLink="/admin/nuevo-producto">+ Añadir producto</a>
+      <app-ui-button variant="ghost" (click)="logout()">Cerrar sesión</app-ui-button>
     </div>
   </header>
-
-  <main class="glass-card table-responsive" style="padding: 0; overflow-x: auto; overflow-y: hidden;">
-    <table class="inventory-table" style="width: 100%; min-width: 760px; text-align: left; border-collapse: collapse;">
-      <thead style="background: rgba(0,0,0,0.03); border-bottom: 1px solid var(--color-border);">
-        <tr>
-          <th style="padding: var(--space-4); font-family: 'Cormorant', serif; font-size: 1.1rem;">ID</th>
-          <th style="padding: var(--space-4); font-family: 'Cormorant', serif; font-size: 1.1rem;">Producto</th>
-          <th style="padding: var(--space-4); font-family: 'Cormorant', serif; font-size: 1.1rem;">Categoría</th>
-          <th style="padding: var(--space-4); font-family: 'Cormorant', serif; font-size: 1.1rem;">Precio</th>
-          <th style="padding: var(--space-4); font-family: 'Cormorant', serif; font-size: 1.1rem;">Estado</th>
-          <th style="padding: var(--space-4); font-family: 'Cormorant', serif; font-size: 1.1rem;">Acciones</th>
-        </tr>
-      </thead>
+  @if (error()) { <div class="message error" role="alert"><p>{{ error() }}</p><button class="text-link" (click)="loadProducts()">Reintentar</button></div> }
+  @if (notice()) { <p class="message" role="status">{{ notice() }}</p> }
+  @if (uploads.pendingCleanup().length) {
+    <div class="message" role="status"><p>Hay imágenes retiradas pendientes de limpieza.</p><button class="text-link" (click)="uploads.retryPendingCleanup()">Reintentar limpieza</button></div>
+  }
+  <div class="table-responsive" [attr.aria-busy]="isLoading()" tabindex="0" role="region" aria-label="Inventario de productos">
+    <table class="inventory-table">
+      <thead><tr><th scope="col">Producto</th><th scope="col">Categoría</th><th scope="col">Precio</th><th scope="col">Estado</th><th scope="col">Acciones</th></tr></thead>
       <tbody>
-        @if (isLoading) {
-          <tr>
-            <td colspan="6" style="padding: var(--space-8); text-align: center;">
-              <div class="skeleton" style="height: 40px; border-radius: var(--radius-sm); margin-bottom: 10px;"></div>
-              <div class="skeleton" style="height: 40px; border-radius: var(--radius-sm); margin-bottom: 10px;"></div>
-            </td>
-          </tr>
+        @if (isLoading()) {
+          <tr><td colspan="5">Cargando inventario…</td></tr>
         } @else {
-          @for (product of products; track product.id) {
-            <tr style="border-bottom: 1px solid var(--color-border); transition: background var(--transition-fast);" class="table-row">
-              <td style="padding: var(--space-4); color: var(--color-muted-foreground);">#{{ product.id | slice:0:8 }}</td>
-              <td style="padding: var(--space-4); display: flex; align-items: center; gap: var(--space-3);">
-                @if (product.imagenUrl) {
-                  <img [src]="product.imagenUrl" alt="Imagen" style="width: 40px; height: 40px; object-fit: cover; border-radius: var(--radius-sm);">
-                } @else {
-                  <div style="width: 40px; height: 40px; background: var(--color-muted); border-radius: var(--radius-sm);"></div>
-                }
-                <span style="font-weight: 500;">{{ product.nombre }}</span>
-              </td>
-              <td style="padding: var(--space-4);">{{ product.categoria }}</td>
-              <td style="padding: var(--space-4); font-weight: 600;">{{ product.precio | currency:'USD':'symbol':'1.2-2':'es-EC' }}</td>
-              <td style="padding: var(--space-4);">
-                <span [style.background]="product.estado === 'Activo' ? 'var(--color-success)' : 'var(--color-muted)'"
-                      [style.color]="product.estado === 'Activo' ? '#fff' : 'var(--color-foreground)'"
-                      style="padding: 4px 12px; border-radius: var(--radius-full); font-size: 0.75rem; font-weight: 600; text-transform: uppercase;">
-                  {{ product.estado }}
-                </span>
-              </td>
-              <td style="padding: var(--space-4);">
-                <button (click)="deleteProduct(product.id)" style="color: var(--color-destructive); font-size: 0.875rem; font-weight: 600; text-decoration: underline;">
-                  Eliminar
-                </button>
-              </td>
-            </tr>
-          } @empty {
+          @for (product of products(); track product.id) {
             <tr>
-              <td colspan="6" style="padding: var(--space-8); text-align: center; color: var(--color-muted-foreground);">
-                No hay productos disponibles en el inventario.
+              <td class="product-cell">
+                @if (product.imagenUrl) { <img [src]="product.imagenUrl" alt="" width="56" height="56" loading="lazy"> }
+                <span>{{ product.nombre }} @if (product.destacado) { <small>Destacado</small> }</span>
               </td>
+              <td>{{ product.categoria }}</td>
+              <td>{{ product.precio | currency:'USD':'symbol':'1.2-2':'es-EC' }}</td>
+              <td><span class="state" [class.active]="product.estado === 'Activo'">{{ product.estado }}</span></td>
+              <td><div class="row-actions">
+                <a class="text-link" [routerLink]="['/admin/editar-producto', product.id]" [attr.aria-label]="'Editar ' + product.nombre">Editar</a>
+                <button class="text-link delete" [disabled]="deletingId() !== null" [attr.aria-label]="'Eliminar ' + product.nombre" (click)="deleteProduct(product)">{{ deletingId() === product.id ? 'Eliminando…' : 'Eliminar' }}</button>
+              </div></td>
             </tr>
-          }
+          } @empty { <tr><td colspan="5">No hay productos en esta página.</td></tr> }
         }
       </tbody>
     </table>
-  </main>
-</div>
+  </div>
+  <nav class="pagination" aria-label="Páginas del inventario">
+    <button class="button-link" [disabled]="page() === 0 || isLoading()" (click)="changePage(-1)">Anterior</button>
+    <span aria-live="polite">Página {{ page() + 1 }} · {{ total() }} productos</span>
+    <button class="button-link" [disabled]="(page() + 1) * pageSize >= total() || isLoading()" (click)="changePage(1)">Siguiente</button>
+  </nav>
+</main>

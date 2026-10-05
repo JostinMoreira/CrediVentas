@@ -36,6 +36,12 @@ export const routes: Routes = [
         canActivate: [authGuard],
         loadComponent: () => import('./features/admin/pages/product-form/product-form').then(m => m.ProductFormComponent)
     },
+    {
+        path: 'admin/editar-producto/:id',
+        title: 'Editar Producto',
+        canActivate: [authGuard],
+        loadComponent: () => import('./features/admin/pages/product-form/product-form').then(m => m.ProductFormComponent)
+    },
 
     // ==========================================
     // RUTA POR DEFECTO

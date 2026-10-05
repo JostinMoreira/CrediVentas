@@ -2,6 +2,7 @@
 
 .btn {
   display: inline-flex;
+  min-height: 44px;
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-md);
@@ -19,7 +20,7 @@
   }
 }
 
-.btn-sm { padding: var(--space-2) var(--space-4); font-size: 0.875rem; }
+.btn-sm { min-height: 44px; padding: var(--space-2) var(--space-4); font-size: 0.875rem; }
 .btn-md { padding: var(--space-3) var(--space-5); font-size: 1rem; }
 .btn-lg { padding: var(--space-4) var(--space-6); font-size: 1.125rem; border-radius: var(--radius-lg); }
 
@@ -60,6 +61,16 @@
   &:hover:not(:disabled) {
     background: var(--color-muted);
     color: var(--color-primary);
+  }
+}
+
+.btn-whatsapp {
+  background-color: var(--color-whatsapp);
+  color: #FFFFFF;
+  &:hover:not(:disabled) {
+    background-color: #126534;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(37, 211, 102, 0.35);
   }
 }
 

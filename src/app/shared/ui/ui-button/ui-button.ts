@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./ui-button.scss']
 })
 export class UiButtonComponent {
-  @Input() variant: 'primary' | 'secondary' | 'accent' | 'glass' | 'ghost' = 'primary';
+  @Input() variant: 'primary' | 'secondary' | 'accent' | 'glass' | 'ghost' | 'whatsapp' = 'primary';
   @Input() size: 'sm' | 'md' | 'lg' = 'md';
   @Input() isLoading: boolean = false;
   @Input() disabled: boolean = false;

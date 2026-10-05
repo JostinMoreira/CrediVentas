@@ -26,6 +26,11 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               {
+                "glob": "browser-image-compression.js",
+                "input": "node_modules/browser-image-compression/dist",
+                "output": "assets/vendor"
+              },
+              {
                 "glob": "**/*",
                 "input": "public"
               }

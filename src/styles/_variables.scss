@@ -5,11 +5,11 @@
   --color-primary-hover: #B91C1C;   // Rojo oscuro para hover/active
   --color-on-primary: #FFFFFF;      // Blanco sobre rojo
 
-  --color-secondary: #0284C7;       // Celeste corporativo equilibrado
+  --color-secondary: #0369A1;       // Celeste corporativo equilibrado
   --color-secondary-hover: #0369A1; // Celeste profundo para hover
   --color-on-secondary: #FFFFFF;
 
-  --color-accent: #0284C7;          // Celeste de acción / destacados
+  --color-accent: #0369A1;          // Celeste de acción / destacados
   --color-accent-hover: #0369A1;
   --color-accent-light: #E0F2FE;    // Celeste claro sutil
   --color-on-accent: #FFFFFF;
@@ -23,12 +23,13 @@
   --color-muted: #F1F5F9;           // Fondo tenue / neutro claro
   --color-muted-foreground: #64748B;// Texto secundario accesible
   --color-border: rgba(226, 232, 240, 0.85); // Borde suave
-  --color-ring: #0284C7;            // Foco celeste accesible
+  --color-ring: #0369A1;            // Foco celeste accesible
 
   // Status
   --color-destructive: #DC2626;
   --color-on-destructive: #FFFFFF;
-  --color-success: #10B981;
+  --color-success: #15803D;
+  --color-whatsapp: #147D3F;
 
   // Spacing (8px grid)
   --space-1: 0.25rem;  // 4px

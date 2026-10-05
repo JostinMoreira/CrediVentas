@@ -1,57 +1,34 @@
-import { Component, forwardRef, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormsModule } from '@angular/forms';
+import { Component, forwardRef, Input, signal } from '@angular/core';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
-  selector: 'app-ui-input',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './ui-input.html',
-  styleUrls: ['./ui-input.scss'],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => UiInputComponent),
-      multi: true
-    }
-  ]
+  selector: 'app-ui-input', standalone: true,
+  host: { '[attr.id]': 'null' },
+  templateUrl: './ui-input.html', styleUrls: ['./ui-input.scss'],
+  providers: [{ provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => UiInputComponent), multi: true }],
 })
 export class UiInputComponent implements ControlValueAccessor {
-  @Input() label: string = '';
-  @Input() type: string = 'text';
-  @Input() placeholder: string = '';
-  @Input() error: string = '';
-  @Input() id: string = 'input-' + Math.random().toString(36).substring(2, 9);
-  
-  value: string = '';
-  disabled: boolean = false;
-  
-  onChange: any = () => {};
-  onTouched: any = () => {};
-
-  writeValue(value: any): void {
-    this.value = value;
+  @Input() label = '';
+  @Input() type = 'text';
+  @Input() placeholder = '';
+  @Input() error = '';
+  @Input() id = 'input-' + crypto.randomUUID();
+  @Input() maxlength: number | null = null;
+  @Input() min: string | null = null;
+  @Input() max: string | null = null;
+  @Input() step: string | null = null;
+  readonly value = signal<string | number>('');
+  readonly disabled = signal(false);
+  private onChange: (value: string | number | null) => void = () => {};
+  private onTouched: () => void = () => {};
+  writeValue(value: unknown): void { this.value.set(typeof value === 'string' || typeof value === 'number' ? value : ''); }
+  registerOnChange(callback: (value: string | number | null) => void): void { this.onChange = callback; }
+  registerOnTouched(callback: () => void): void { this.onTouched = callback; }
+  setDisabledState(disabled: boolean): void { this.disabled.set(disabled); }
+  handleInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.value.set(input.value);
+    this.onChange(this.type === 'number' ? (input.value === '' ? null : input.valueAsNumber) : input.value);
   }
-  
-  registerOnChange(fn: any): void {
-    this.onChange = fn;
-  }
-  
-  registerOnTouched(fn: any): void {
-    this.onTouched = fn;
-  }
-  
-  setDisabledState(isDisabled: boolean): void {
-    this.disabled = isDisabled;
-  }
-
-  handleInput(event: Event) {
-    const val = (event.target as HTMLInputElement).value;
-    this.value = val;
-    this.onChange(val);
-  }
-
-  handleBlur() {
-    this.onTouched();
-  }
+  handleBlur(): void { this.onTouched(); }
 }

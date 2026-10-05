@@ -1,9 +1,13 @@
-import { inject } from '@angular/core';
+import { inject, Injector } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { AuthService } from '../services/auth';
-
 export const authGuard: CanActivateFn = async (_route, state) => {
-  const auth = inject(AuthService);
+  const injector = inject(Injector);
   const router = inject(Router);
-  return await auth.session ? true : router.createUrlTree(['/login'], { queryParams: { returnUrl: state.url } });
+  const { AuthService } = await import('../services/auth');
+  try {
+    if (await injector.get(AuthService).isAdministrator()) return true;
+  } catch {
+    // Unverifiable sessions must not open the administrative interface.
+  }
+  return router.createUrlTree(['/login'], { queryParams: { returnUrl: state.url } });
 };

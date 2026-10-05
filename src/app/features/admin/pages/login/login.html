@@ -6,17 +6,18 @@
     <p class="subtitle">Ingresa para gestionar tu catálogo.</p>
 
     <label for="email">Correo electrónico</label>
-    <input id="email" type="email" autocomplete="username" formControlName="email" placeholder="tu@correo.com">
+    <input id="email" type="email" autocomplete="username" formControlName="email" placeholder="tu@correo.com" [attr.aria-invalid]="form.controls.email.touched && form.controls.email.invalid" [attr.aria-describedby]="form.controls.email.touched && form.controls.email.invalid ? 'email-error' : null">
     @if (form.controls.email.touched && form.controls.email.invalid) {
-      <span class="field-error">Ingresa un correo válido.</span>
+      <span id="email-error" class="field-error">Ingresa un correo válido.</span>
     }
 
     <label for="password">Contraseña</label>
-    <input id="password" type="password" autocomplete="current-password" formControlName="password" placeholder="Tu contraseña">
-    @if (errorMessage) { <p class="error-message" role="alert">{{ errorMessage }}</p> }
+    <input id="password" type="password" autocomplete="current-password" formControlName="password" placeholder="Tu contraseña" [attr.aria-invalid]="form.controls.password.touched && form.controls.password.invalid" [attr.aria-describedby]="form.controls.password.touched && form.controls.password.invalid ? 'password-error' : null">
+    @if (form.controls.password.touched && form.controls.password.invalid) { <span id="password-error" class="field-error">Ingresa tu contraseña.</span> }
+    @if (errorMessage()) { <p class="error-message" role="alert">{{ errorMessage() }}</p> }
 
-    <button type="submit" [disabled]="isSubmitting">
-      {{ isSubmitting ? 'Ingresando…' : 'Ingresar al panel' }}
+    <button type="submit" [disabled]="isSubmitting()" [attr.aria-busy]="isSubmitting()">
+      {{ isSubmitting() ? 'Ingresando…' : 'Ingresar al panel' }}
     </button>
     <a class="back-link" routerLink="/">Volver al catálogo</a>
   </form>

@@ -1,69 +1,8 @@
-@use '../../../../styles/mixins' as *;
-
-.navbar {
-  position: sticky;
-  top: 0;
-  z-index: var(--z-header);
-  border-radius: 0;
-  border-top: none;
-  border-left: none;
-  border-right: none;
-  padding: var(--space-3) 0;
-}
-
-.navbar-container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-6);
-}
-
-.logo {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1.75rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  color: var(--color-accent);
-  span {
-    color: var(--color-primary);
-  }
-}
-
-.nav-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-  margin-left: auto;
-}
-
-.nav-link {
-  font-weight: 600;
-  font-size: 0.875rem;
-  color: var(--color-foreground);
-  transition: color var(--transition-fast);
-  &:hover {
-    color: var(--color-primary);
-  }
-}
-
-.catalog-link { margin-left: auto; }
-
-@media (max-width: 600px) {
-  .navbar-container {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 10px 14px;
-  }
-
-  .logo { min-width: 0; font-size: 1.45rem; white-space: nowrap; }
-  .catalog-link { grid-column: 1 / -1; grid-row: 2; justify-self: start; min-height: 44px; display: flex; align-items: center; margin: 0; }
-  .nav-actions { gap: 8px; margin: 0; }
-  .nav-link { font-size: .8rem; }
-}
-
-@media (max-width: 380px) {
-  .navbar-container { grid-template-columns: minmax(0, 1fr); gap: 6px; }
-  .logo { grid-row: 1; }
-  .catalog-link { grid-row: 2; }
-  .nav-actions { grid-row: 3; justify-content: space-between; }
-}
+:host { display: block; position: sticky; top: 0; z-index: var(--z-header); }
+.navbar { padding: 8px 0; border-bottom: 1px solid var(--color-border); border-radius: 0; background: #fffffff5; }
+.navbar-container { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: 4px 12px; }
+.logo { font-size: 1.3rem; font-weight: 800; color: var(--color-accent); white-space: nowrap; span { color: var(--color-primary); } }
+.catalog-link { grid-column: 1 / -1; grid-row: 2; }
+.nav-actions { grid-column: 2; grid-row: 1; }
+.nav-link { display: inline-flex; align-items: center; min-height: 44px; font-size: .8rem; font-weight: 600; }
+@media (min-width: 768px) { .navbar-container { display: flex; gap: 24px; }.logo { font-size: 1.75rem; }.catalog-link { margin-left: auto; }.nav-link { font-size: .9rem; } }

@@ -1,46 +1,58 @@
 <app-navbar />
-<main class="detail-page">
-  <a routerLink="/" class="back-link">← Volver al catálogo</a>
+<main class="detail-page" id="main-content">
+  <a routerLink="/" fragment="catalogo" class="back-link">← Volver al catálogo</a>
   @if (isLoading()) {
-    <p class="detail-message">Cargando producto…</p>
+    <p class="detail-message" role="status">Cargando producto…</p>
+  } @else if (error()) {
+    <div class="message error" role="alert"><p>{{ error() }}</p><button class="button-link" (click)="loadProduct()">Reintentar</button></div>
   } @else if (product(); as product) {
     <article class="detail-card">
       <div class="gallery">
-      @if (activeImage(); as image) {
-        <div class="main-image"><img [src]="image" [alt]="product.nombre"></div>
-      } @else {
-        <div class="image-placeholder">Imagen próximamente</div>
-      }
-      @if (gallery().length > 1) {
-        <div class="thumbnails" aria-label="Más imágenes del producto">
-          @for (image of gallery(); track image; let index = $index) {
-            <button type="button" class="thumbnail" [class.selected]="activeImageIndex() === index" [attr.aria-label]="'Ver imagen ' + (index + 1)" [attr.aria-pressed]="activeImageIndex() === index" (click)="activeImageIndex.set(index)">
-              <img [src]="image" [alt]="product.nombre + ' imagen ' + (index + 1)">
-            </button>
-          }
-        </div>
-      }
+        @if (gallery().length) {
+          <div #galleryTrack class="main-gallery" role="group" aria-label="Galería del producto. Usa las flechas para cambiar de imagen." tabindex="0" (scroll)="onGalleryScroll($event)" (keydown.arrowright)="stepImage(1, $event)" (keydown.arrowleft)="stepImage(-1, $event)">
+            @for (image of gallery(); track image; let index = $index) {
+              <div class="gallery-slide">
+                @if (failedImages().has(image)) { <div class="image-placeholder">Imagen no disponible</div> }
+                @else {
+                  <button class="expand-image" [attr.aria-label]="'Ampliar imagen ' + (index + 1) + ' de ' + product.nombre" (click)="openImage(index)">
+                    <img [src]="image" [alt]="product.nombre + ' · imagen ' + (index + 1)" width="800" height="800" [loading]="index === 0 ? 'eager' : 'lazy'" decoding="async" (error)="imageError(image)">
+                  </button>
+                }
+              </div>
+            }
+          </div>
+          <p class="gallery-help">Toca una imagen para ampliarla.</p>
+        } @else { <div class="image-placeholder">Imagen próximamente</div> }
+        @if (gallery().length > 1) {
+          <div class="thumbnails" role="group" aria-label="Elegir imagen">
+            @for (image of gallery(); track image; let index = $index) {
+              <button class="thumbnail" [class.selected]="activeImageIndex() === index" [attr.aria-label]="'Ver imagen ' + (index + 1)" [attr.aria-pressed]="activeImageIndex() === index" (click)="selectImage(index)">
+                @if (failedThumbnails().has(image)) { <span>{{ index + 1 }}</span> }
+                @else { <img [src]="thumbnail(image)" alt="" width="76" height="76" loading="lazy" decoding="async" (error)="thumbnailError(image)"> }
+              </button>
+            }
+          </div>
+          <p class="gallery-count" role="status">Imagen {{ activeImageIndex() + 1 }} de {{ gallery().length }}</p>
+        }
       </div>
       <div class="detail-copy">
-        <span class="category">{{ product.categoria }}</span>
-        <h1>{{ product.nombre }}</h1>
+        <span class="category">{{ product.categoria }}</span><h1>{{ product.nombre }}</h1>
         <p class="price">{{ product.precio | currency:'USD':'symbol':'1.2-2':'es-EC' }}</p>
         @if (product.descripcion) { <p class="description">{{ product.descripcion }}</p> }
-        <a class="whatsapp-link" [href]="whatsappUrl" target="_blank" rel="noopener noreferrer">Consultar por WhatsApp</a>
+        <a class="whatsapp-link" [href]="whatsappUrl()" target="_blank" rel="noopener noreferrer">Consultar por WhatsApp</a>
       </div>
     </article>
     @if (specifications().length) {
-      <section class="specifications" aria-labelledby="specifications-title">
-        <h2 id="specifications-title">Especificaciones</h2>
-        <dl>
-          @for (specification of specifications(); track specification[0]) {
-            <div><dt>{{ specification[0] }}</dt><dd>{{ specification[1] }}</dd></div>
-          }
-        </dl>
+      <section class="specifications" aria-labelledby="specifications-title"><h2 id="specifications-title">Especificaciones</h2>
+        <dl>@for (specification of specifications(); track specification[0]) { <div><dt>{{ specification[0] }}</dt><dd>{{ specification[1] }}</dd></div> }</dl>
       </section>
     }
+    <dialog #imageDialog class="image-dialog" aria-label="Imagen ampliada del producto" (click)="closeOnBackdrop($event)">
+      <button class="close-dialog" (click)="closeImage()" autofocus>Cerrar ×</button>
+      <img [src]="gallery()[activeImageIndex()]" [alt]="product.nombre + ' ampliado'">
+    </dialog>
   } @else {
-    <p class="detail-message">No encontramos este producto o ya no está disponible.</p>
+    <div class="detail-message"><h1>Producto no disponible</h1><p>No encontramos este producto o ya no está publicado.</p><a class="button-link" routerLink="/" fragment="catalogo">Explorar otros productos</a></div>
   }
 </main>
 <app-footer />
