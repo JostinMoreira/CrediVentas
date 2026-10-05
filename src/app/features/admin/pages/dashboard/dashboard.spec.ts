@@ -32,11 +32,11 @@ describe('Inventory behavior', () => {
     expect(cleanup).toHaveBeenCalledWith([product.imagenUrl]);
     expect(fixture.nativeElement.textContent).toContain('Producto eliminado');
   });
-  it('keeps the row and images when deletion fails', async () => {
+  it('keeps the row and requests reference-safe cleanup when deletion is unconfirmed', async () => {
     remove.mockRejectedValue(new Error('denied'));
     await fixture.componentInstance.deleteProduct(product); await fixture.whenStable();
     expect(fixture.nativeElement.textContent).toContain('Refrigeradora');
-    expect(cleanup).not.toHaveBeenCalled();
+    expect(cleanup).toHaveBeenCalledWith([product.imagenUrl]);
     expect(fixture.nativeElement.querySelector('[role=alert]')).toBeTruthy();
   });
   it('blocks a repeated delete while the first request is pending', async () => {

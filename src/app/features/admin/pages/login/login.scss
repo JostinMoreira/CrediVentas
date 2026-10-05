@@ -7,7 +7,7 @@
 h1 { margin: 0; color: var(--color-foreground); font-size: 32px; letter-spacing: -.05em; }
 .subtitle { margin: 10px 0 28px; color: var(--color-muted-foreground); }
 label { margin: 15px 0 8px; color: var(--color-foreground); font-size: 13px; font-weight: 700; }
-input { min-height: 48px; padding: 0 14px; border: 1px solid var(--color-border); border-radius: 9px; background: #fff; font: inherit; }
+input, select { min-height: 48px; min-width: 0; padding: 0 14px; border: 1px solid var(--color-border); border-radius: 9px; background: #fff; font: inherit; }
 input:focus { outline: 3px solid rgba(2, 132, 199, 0.2); border-color: var(--color-accent); }
 .field-error, .error-message { color: var(--color-destructive); font-size: 13px; }
 .error-message { margin: 14px 0 0; }
@@ -16,3 +16,6 @@ button:hover:not(:disabled) { background: var(--color-primary-hover); }
 button:disabled { opacity: .65; cursor: wait; }
 .back-link { margin-top: 20px; color: var(--color-muted-foreground); text-align: center; font-size: 13px; text-decoration: none; transition: color var(--transition-fast); &:hover { color: var(--color-primary); } }
 @media (max-width: 480px) { .login-card { padding: 30px 24px; } }
+.secondary { background: var(--color-muted); color: var(--color-foreground); margin-top: 12px; }
+.secondary:hover:not(:disabled) { background: var(--color-border); }
+.recovery { font-size: 13px; margin: 20px 0 0; }

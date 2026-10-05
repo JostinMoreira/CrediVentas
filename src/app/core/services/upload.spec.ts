@@ -50,4 +50,10 @@ describe('Image lifecycle', () => {
     const { default: compress } = await import('browser-image-compression');
     expect(compress).toHaveBeenCalledWith(expect.any(File), expect.objectContaining({ libURL: expect.stringContaining('/assets/vendor/browser-image-compression.js') }));
   });
+  it('preserves both queued files when cleanups overlap', async () => {
+    limit.mockResolvedValue({ data: null, error: new Error('offline') });
+    const second = imageUrl.replace('11111111-1111-4111-8111-111111111111', '22222222-2222-4222-8222-222222222222');
+    await Promise.all([service.removeUnreferencedImages([imageUrl]), service.removeUnreferencedImages([second])]);
+    expect(service.pendingCleanup()).toEqual([imageUrl, second]);
+  });
 });

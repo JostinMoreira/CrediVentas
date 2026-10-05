@@ -21,6 +21,14 @@ El conector disponible no expone la modificación de configuración de Auth. El 
 
 La configuración de `supabase/config.toml` es local. Cambiar ese archivo **no actualiza** automáticamente Auth alojado.
 
+## Entorno local verificado
+
+La instalación desde cero se completó con Docker Desktop, localizado en AppData/Local/Programs/DockerDesktop. Las seis migraciones pasaron y también las pruebas SQL de roles. Se comprobaron además sesiones reales de Auth y cargas/borrados de Storage en el entorno local; se limpiaron las cuentas, productos e imágenes temporales.
+
+La prueba detectó y corrigió la configuración local de correo: auth.enable_signup=false cierra el registro, mientras auth.email.enable_signup=true conserva el proveedor para iniciar sesión. Se verificó que las cuentas administrativas existentes pueden entrar y que el registro público sigue rechazado. Esta corrección de config.toml se aplica solo al entorno local.
+
+Los servicios locales de CrediVentas se detuvieron conservando su almacenamiento. Las pruebas no cambiaron la configuración pública del frontend ni los ajustes de Auth alojado. Para repetirlas, consulta [el README](../README.md#entorno-local-aislado).
+
 ## Copias y recuperación
 
 No se ha confirmado el plan, la retención de copias o PITR del proyecto. No se debe dar por disponible una copia sin revisar [los backups de Supabase](https://supabase.com/docs/guides/platform/backups).
@@ -66,3 +74,5 @@ Después de publicar en el dominio real:
 - Confirmar el número y texto del enlace de WhatsApp sin enviar pedidos de prueba a clientes.
 - Revisar avisos de npm y asesores de Supabase después de nuevas dependencias o migraciones.
 - La configuración de CI está versionada, pero debe ejecutarse en el repositorio remoto para demostrar su resultado allí.
+
+La lista priorizada de trabajo restante y sus criterios de finalización están en [PENDIENTES.md](PENDIENTES.md).

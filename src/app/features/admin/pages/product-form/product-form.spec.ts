@@ -50,4 +50,18 @@ describe('Product editing behavior', () => {
     expect(upload).toHaveBeenCalledOnce(); done(['https://example.com/new.webp']); await first;
     expect(create).toHaveBeenCalledOnce();
   });
+  it('cleans up images from an edit that succeeded but lost its response', async () => {
+    fixture.componentInstance.isEditMode.set(true);
+    update.mockRejectedValueOnce(new Error('response lost'));
+    upload.mockResolvedValueOnce(['https://example.com/first-edit.webp']).mockResolvedValueOnce(['https://example.com/retry.webp']);
+    await fixture.componentInstance.onSubmit();
+    getById.mockResolvedValueOnce({ imagenUrl: 'https://example.com/first-edit.webp', imagenes: [] });
+    await fixture.componentInstance.onSubmit();
+    expect(update).toHaveBeenCalledTimes(2);
+    expect(cleanup).toHaveBeenLastCalledWith(['https://example.com/first-edit.webp']);
+  });
+  it('gives each input a unique label target', () => {
+    expect(fixture.nativeElement.querySelectorAll('#nombre')).toHaveLength(1);
+    expect(fixture.nativeElement.querySelector('#nombre').tagName).toBe('INPUT');
+  });
 });

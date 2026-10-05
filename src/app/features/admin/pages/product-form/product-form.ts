@@ -108,9 +108,9 @@ export class ProductFormComponent implements OnInit {
     let saved = false;
     try {
       // If the previous response was lost, include its images when cleaning up a successful retry.
-      if (this.attemptedSave && !this.isEditMode()) {
+      if (this.attemptedSave) {
         const previous = await this.productService.getById(this.productId);
-        if (previous) this.originalImages = productImages(previous);
+        if (previous) this.originalImages = [...new Set([...this.originalImages, ...productImages(previous)])];
       }
       this.attemptedSave = true;
       this.status.set(this.selectedFiles().length ? 'Preparando y subiendo imágenes…' : 'Guardando producto…');

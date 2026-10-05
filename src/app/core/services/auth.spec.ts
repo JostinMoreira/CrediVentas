@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { AuthService } from './auth';
 import { SupabaseService } from './supabase';
+import { MfaService } from './mfa';
 describe('Auth permissions', () => {
   const auth = { getUser: vi.fn(), signInWithPassword: vi.fn(), signOut: vi.fn(), onAuthStateChange: vi.fn() };
   let service: AuthService;
@@ -14,6 +15,7 @@ describe('Auth permissions', () => {
     TestBed.configureTestingModule({ providers: [
       { provide: SupabaseService, useValue: { client: { auth } } },
       { provide: Router, useValue: { url: '/admin', navigate } },
+      { provide: MfaService, useValue: { requiresChallenge: async () => false } },
     ] });
     service = TestBed.inject(AuthService);
   });

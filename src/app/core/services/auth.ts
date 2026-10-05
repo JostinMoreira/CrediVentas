@@ -2,19 +2,31 @@ import { DestroyRef, Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthChangeEvent, Session } from '@supabase/supabase-js';
 import { SupabaseService } from './supabase';
+import { MfaService } from './mfa';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly supabase = inject(SupabaseService).client;
   private readonly router = inject(Router);
+  private readonly mfa = inject(MfaService);
+  private readonly destroyRef = inject(DestroyRef);
 
   constructor() {
-    const subscription = this.onAuthStateChange((_event, session) => {
+    const subscription = this.onAuthStateChange((event, session) => {
       if ((!session || session.user.app_metadata['is_admin'] !== true) && /^\/admin(?:\/|$)/.test(this.router.url)) {
         queueMicrotask(() => void this.router.navigate(['/login']));
       }
+      if (session && event === 'TOKEN_REFRESHED') {
+        // Auth callbacks run under the client's lock. Check MFA only after it is released.
+        setTimeout(() => {
+          if (this.destroyRef.destroyed || !/^\/admin(?:\/|$)/.test(this.router.url)) return;
+          void this.mfa.requiresChallenge().then(required => {
+            if (required && !this.destroyRef.destroyed) void this.router.navigate(['/login']);
+          }).catch(() => { if (!this.destroyRef.destroyed) void this.router.navigate(['/login']); });
+        });
+      }
     });
-    inject(DestroyRef).onDestroy(() => subscription.unsubscribe());
+    this.destroyRef.onDestroy(() => subscription.unsubscribe());
   }
 
   async isAdministrator(): Promise<boolean> {

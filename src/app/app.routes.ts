@@ -31,6 +31,12 @@ export const routes: Routes = [
         loadComponent: () => import('./features/admin/pages/dashboard/dashboard').then(m => m.Dashboard)
     },
     {
+        path: 'admin/seguridad',
+        title: 'Seguridad de la cuenta',
+        canActivate: [authGuard],
+        loadComponent: () => import('./features/admin/pages/security').then(m => m.Security),
+    },
+    {
         path: 'admin/nuevo-producto',
         title: 'Agregar Producto',
         canActivate: [authGuard],

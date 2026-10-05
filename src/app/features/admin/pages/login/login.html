@@ -1,4 +1,24 @@
 <main class="login-page">
+  @if (challenge()) {
+    <form class="login-card" (submit)="$event.preventDefault(); verifyCode()">
+      <a class="brand" routerLink="/">Crediventas <span>Caminante</span></a>
+      <p class="eyebrow">VERIFICACIÓN</p>
+      <h1>Confirma que eres tú</h1>
+      <p id="mfa-help" class="subtitle">Abre tu aplicación de autenticación e ingresa o pega el código actual.</p>
+      @if (factors().length > 1) {
+        <label for="mfa-factor">Dispositivo</label>
+        <select id="mfa-factor" [value]="selectedFactor()" (change)="selectedFactor.set($any($event.target).value)">
+          @for (factor of factors(); track factor.id) { <option [value]="factor.id">{{ factor.name }}</option> }
+        </select>
+      }
+      <label for="mfa-code">Código de seis dígitos</label>
+      <input id="mfa-code" type="text" inputmode="numeric" autocomplete="one-time-code" [formField]="codeForm.code" aria-describedby="mfa-help" [attr.aria-invalid]="!!errorMessage()">
+      @if (errorMessage()) { <p class="error-message" role="alert">{{ errorMessage() }}</p> }
+      <button type="submit" [disabled]="isSubmitting()" [attr.aria-busy]="isSubmitting()">{{ isSubmitting() ? 'Verificando…' : 'Verificar y entrar' }}</button>
+      <button type="button" class="secondary" [disabled]="isSubmitting()" (click)="cancelChallenge()">Usar otra cuenta</button>
+      <p class="subtitle recovery">Si perdiste tu dispositivo, usa otro autenticador registrado o contacta al propietario para recuperar el acceso.</p>
+    </form>
+  } @else {
   <form class="login-card" [formGroup]="form" (ngSubmit)="submit()">
     <a class="brand" routerLink="/">Crediventas <span>Caminante</span></a>
     <p class="eyebrow">ADMINISTRACIÓN</p>
@@ -21,4 +41,5 @@
     </button>
     <a class="back-link" routerLink="/">Volver al catálogo</a>
   </form>
+  }
 </main>

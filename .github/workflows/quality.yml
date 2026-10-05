@@ -27,10 +27,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24.15.0'
-      - run: npx --yes supabase@2.119.0 start
+      - run: npm ci --omit=dev --ignore-scripts
+      - run: npx --yes supabase@2.119.0 start --exclude realtime,imgproxy,mailpit,postgres-meta,studio,edge-runtime,logflare,vector,supavisor > /tmp/supabase-start.log 2>&1
       - name: Verificar permisos y restricciones
         env:
           PGPASSWORD: postgres
         run: psql -h 127.0.0.1 -p 54322 -U postgres -d postgres -v ON_ERROR_STOP=1 -f supabase/tests/roles.sql
+      - name: Verificar Auth y Storage con sesiones reales
+        run: npm run test:db
       - if: always()
-        run: npx --yes supabase@2.119.0 stop --no-backup
+        run: npx --yes supabase@2.119.0 stop --project-id CrediVentas

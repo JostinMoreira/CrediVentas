@@ -22,6 +22,8 @@ begin
   execute 'reset role';
   perform set_config('request.jwt.claims','{"role":"authenticated","sub":"a5d190f1-f888-4ab8-9786-0a78a46c1999","app_metadata":{},"user_metadata":{"is_admin":true}}',true);
   execute 'set local role authenticated';
+  select count(*) into n from public.productos where categoria='Pruebas aisladas';
+  if n <> 1 then raise exception 'FAIL: user_metadata grants hidden-product access'; end if;
   update public.productos set precio=11 where id='a5d190f1-f888-4ab8-9786-0a78a46c1001';
   get diagnostics n = row_count; if n <> 0 then raise exception 'FAIL: nonadmin update'; end if;
   delete from public.productos where id='a5d190f1-f888-4ab8-9786-0a78a46c1001';

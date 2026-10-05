@@ -53,7 +53,12 @@ export class Dashboard implements OnInit {
       this.notice.set('Producto eliminado.');
       await this.uploads.removeUnreferencedImages(productImages(product));
       await this.loadProducts();
-    } catch { this.error.set('No se pudo eliminar el producto. Actualiza el inventario antes de reintentar.'); }
+    } catch {
+      // A lost response may follow a committed deletion. Reference checks retain images
+      // if the product still exists; failed checks queue cleanup for a later retry.
+      await this.uploads.removeUnreferencedImages(productImages(product));
+      this.error.set('No se pudo confirmar la eliminación. Actualiza el inventario antes de reintentar.');
+    }
     finally { this.deletingId.set(null); }
   }
   async logout(): Promise<void> {

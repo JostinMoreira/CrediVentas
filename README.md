@@ -2,6 +2,15 @@
 
 Catálogo de productos para el hogar y el campo. Los clientes exploran artículos y consultan por WhatsApp; los administradores gestionan productos e imágenes.
 
+## Estado al 5 de octubre de 2026
+
+- Compilación de producción correcta y **61 pruebas aprobadas en 16 archivos**.
+- **Seis migraciones aplicadas desde cero con Docker**; permisos, sesiones reales de Auth y cargas/borrados de imágenes comprobados en Supabase local.
+- `npm audit`: **0 vulnerabilidades conocidas** en la última consulta de esa fecha.
+- Catálogo y ficha revisados en tamaños de móvil; correcciones de seguridad aplicadas al esquema remoto.
+
+Quedan ajustes de Auth en producción, MFA, publicación, copias y verificaciones adicionales. Consulta la [lista priorizada de pendientes](docs/PENDIENTES.md) y los [resultados con su alcance](docs/CORRECCIONES-2026-10-05.md).
+
 ## Funciones
 
 - Catálogo paginado, categorías y búsqueda en servidor que ignora tildes y mayúsculas.
@@ -33,7 +42,7 @@ Requiere una versión de Node compatible con `package.json` (por ejemplo **24.15
 
 Estos valores son públicos y se incluyen en el navegador. **Nunca** uses `service_role`, `sb_secret`, contraseñas de base de datos o tokens administrativos. El generador rechaza claves privadas.
 
-Los comandos npm generan `src/environments/environment.generated.ts`, ignorado por Git. Las variables del proceso tienen prioridad sobre `.env`. Si usas directamente `ng` desde otro editor, ejecuta antes `npm run config:generate`. Para `npm run watch`, genera también la configuración primero.
+Los comandos npm generan `src/environments/environment.generated.ts`, ignorado por Git. Las variables del proceso tienen prioridad sobre `.env`. Si usas directamente `ng` desde otro editor, ejecuta antes `npm run config:generate`. `npm run watch` también genera la configuración automáticamente.
 
 ## Comandos
 
@@ -42,6 +51,7 @@ Los comandos npm generan `src/environments/environment.generated.ts`, ignorado p
 | `npm start` | Configura e inicia desarrollo. |
 | `npm run build` | Genera configuración y compila producción. |
 | `npm run test:ci` | Ejecuta las pruebas sin modo continuo. |
+| `npm run test:db` | Prueba Auth, permisos e imágenes en Supabase local ya iniciado. Rechaza proyectos remotos. |
 | `npm run check` | Compilación y pruebas. |
 | `npm audit` | Auditoría actual de dependencias. |
 | `npm run config:generate` | Regenera solo la configuración pública. |
@@ -54,10 +64,10 @@ El esquema está en `supabase/migrations`. Incluye tabla inicial, galería, rest
 
 ### Entorno local aislado
 
-Requiere Docker en ejecución:
+Requiere Docker en ejecución y su CLI disponible en PATH. Este es el arranque usado en las pruebas, con los servicios necesarios para base de datos, Auth y Storage:
 
 ```sh
-npx --yes supabase@2.119.0 start
+npx --yes supabase@2.119.0 start --exclude realtime,imgproxy,mailpit,postgres-meta,studio,edge-runtime,logflare,vector,supavisor
 ```
 
 La primera ejecución descarga imágenes de contenedores. La configuración local deshabilita nuevos registros; las cuentas de prueba se crean por la API administrativa **local**, nunca con claves privadas dentro del frontend.
@@ -70,12 +80,14 @@ Las comprobaciones de permisos se ejecutan dentro de una transacción que termin
 Get-Content supabase/tests/roles.sql | docker exec -i supabase_db_CrediVentas psql -U postgres -d postgres -v ON_ERROR_STOP=1
 ```
 
-Los datos de prueba están dentro de ese SQL; no se añaden productos ficticios permanentes al catálogo. El proceso de GitHub Actions también levanta una base limpia y ejecuta estas comprobaciones.
+Los datos de prueba están dentro de ese SQL; no se añaden productos ficticios permanentes al catálogo. El workflow de GitHub Actions está configurado para levantar una base limpia y ejecutar estas comprobaciones; su ejecución remota aún está pendiente.
+
+Ejecuta también `npm run test:db` para comprobar sesiones reales de Auth, permisos y cargas/borrados de Storage. Crea cuentas y artículos temporales, los limpia al terminar y conserva sus eventos en la auditoría privada local. Requiere la CLI y Docker disponibles en PATH. Las claves locales se leen internamente; no se guardan en archivos ni se imprimen. El script rechaza servidores remotos.
 
 Para detener los servicios locales conservando su almacenamiento:
 
 ```sh
-npx --yes supabase@2.119.0 stop
+npx --yes supabase@2.119.0 stop --project-id CrediVentas
 ```
 
 ### Cambios de esquema
@@ -117,7 +129,7 @@ Consulta [operación y seguridad](docs/OPERACION.md) para registro público, con
 
 ## Diseño y navegación
 
-Los tokens vigentes están en `src/styles/_variables.scss`: rojo `#DC2626`, azul `#0369A1`, WhatsApp `#147D3F` y fondo `#F8FAFC`. Se usa Montserrat con alternativas del sistema. Los documentos antiguos de diseño no sustituyen estos valores implementados.
+Los tokens vigentes están en `src/styles/_variables.scss`: rojo `#DC2626`, azul `#0369A1`, WhatsApp `#147D3F` y fondo `#F8FAFC`. Se usa Montserrat con alternativas del sistema.
 
 El catálogo restaura posición y desplaza a anclas dejando espacio para la cabecera. Las fichas añaden título, descripción, Open Graph y datos estructurados reales. Al ser una SPA, las vistas previas de redes que no ejecutan JavaScript pueden seguir mostrando metadatos genéricos; prerender/SSR debe planificarse con el dominio de publicación.
 
@@ -134,8 +146,20 @@ En Vercel:
 
 No se publica automáticamente desde el trabajo local.
 
+## Qué falta por hacer
+
+1. Cerrar el registro público y revisar contraseñas en **Auth alojado**. La configuración local ya está probada; no cambia esos ajustes remotos.
+2. Incorporar enrolamiento y desafío MFA para el administrador antes de exigir AAL2.
+3. Ejecutar el workflow en GitHub y verificar el despliegue en el dominio real, incluyendo HTTPS, cabeceras y CSP.
+4. Confirmar copias de datos e imágenes y ensayar su restauración en un entorno aislado.
+5. Completar la revisión del panel con sesión real, accesibilidad, galería con varias fotos y dispositivos reales.
+6. Preparar vistas previas de redes, monitorización remota y mantenimiento de imágenes/auditoría.
+
+Los requisitos para dar por terminado cada punto están en [PENDIENTES.md](docs/PENDIENTES.md).
+
 ## Calidad y estado
 
+- [Pendientes priorizados](docs/PENDIENTES.md).
 - [Auditoría inicial](docs/AUDITORIA-2026-10-05.md).
 - [Correcciones y comprobaciones](docs/CORRECCIONES-2026-10-05.md).
 - [Operación, copias y límites](docs/OPERACION.md).

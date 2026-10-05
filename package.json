@@ -13,7 +13,9 @@
     "prestart": "npm run config:generate",
     "prebuild": "node scripts/generate-environment.mjs --production",
     "pretest": "npm run config:generate",
-    "pretest:ci": "npm run config:generate"
+    "pretest:ci": "npm run config:generate",
+    "prewatch": "npm run config:generate",
+    "test:db": "node scripts/verify-local-supabase.mjs"
   },
   "private": true,
   "packageManager": "npm@11.16.0",

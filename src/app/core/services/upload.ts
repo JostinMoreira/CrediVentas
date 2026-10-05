@@ -20,6 +20,7 @@ export function thumbnailUrl(url: string): string {
 @Injectable({ providedIn: 'root' })
 export class UploadService {
   readonly pendingCleanup = signal<string[]>([]);
+  private cleanupQueue: Promise<number> = Promise.resolve(0);
   private readonly queueKey = 'crediventas:image-cleanup:' + new URL(environment.supabaseUrl).hostname;
   constructor(private readonly supabaseService: SupabaseService) {
     try {
@@ -67,7 +68,12 @@ export class UploadService {
     }
   }
   /** Never remove an object when its references cannot be verified. RLS also guards deletions. */
-  async removeUnreferencedImages(urls: string[]): Promise<number> {
+  removeUnreferencedImages(urls: string[]): Promise<number> {
+    const work = this.cleanupQueue.then(() => this.cleanImages(urls));
+    this.cleanupQueue = work.catch(() => this.pendingCleanup().length);
+    return work;
+  }
+  private async cleanImages(urls: string[]): Promise<number> {
     const pending = new Set(this.pendingCleanup());
     for (const url of new Set(urls)) {
       const path = storageImagePath(url);

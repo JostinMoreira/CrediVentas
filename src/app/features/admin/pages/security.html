@@ -1,0 +1,54 @@
+<main class="container security-page">
+  <a class="text-link" routerLink="/admin">← Volver al panel</a>
+  <h1>Seguridad de la cuenta</h1>
+  <p class="intro">Protege tu acceso con un código generado por una aplicación de autenticación.</p>
+  @if (error()) { <p class="message error" role="alert">{{ error() }}</p> }
+  @if (notice()) { <p class="message" role="status">{{ notice() }}</p> }
+  <section class="security-card" aria-labelledby="devices-heading" [attr.aria-busy]="busy()">
+    <h2 id="devices-heading">Tus autenticadores</h2>
+    @if (!loaded()) {
+      <p>{{ busy() ? 'Consultando dispositivos…' : 'No se pudo cargar la configuración.' }}</p>
+      <button class="button-link" [disabled]="busy()" (click)="load()">Reintentar</button>
+    } @else {
+      <ul>
+        @for (factor of factors(); track factor.id) {
+          <li><span>{{ factor.name }} <small>Verificado</small></span><button class="button-link" [disabled]="busy() || !!enrollment() || factors().length < 2" (click)="remove(factor)" [attr.aria-label]="'Retirar ' + factor.name">Retirar</button></li>
+        } @empty { <li>Aún no has activado un autenticador.</li> }
+      </ul>
+      <p class="hint">Añade un segundo dispositivo como respaldo. Para retirar uno, debe quedar otro verificado.</p>
+      @if (pendingFactors().length) {
+        <h3>Configuraciones sin terminar</h3>
+        <p>Retira las que hayas abandonado antes de volver a configurar ese dispositivo.</p>
+        <ul>@for (factor of pendingFactors(); track factor.id) {
+          <li><span>{{ factor.name }}</span><button class="button-link" [disabled]="busy() || !!enrollment()" (click)="discardPending(factor)" [attr.aria-label]="'Cancelar configuración de ' + factor.name">Cancelar configuración</button></li>
+        }</ul>
+      }
+    }
+  </section>
+  @if (loaded()) {
+    <section class="security-card" aria-labelledby="setup-heading">
+      <h2 id="setup-heading">{{ enrollment() ? 'Vincula tu autenticador' : 'Añadir dispositivo' }}</h2>
+      @if (enrollment(); as pending) {
+        <p>Escanea este código desde tu aplicación de autenticación. No lo compartas.</p>
+        <img class="qr" [src]="pending.qr" alt="Código QR para vincular el autenticador" width="240" height="240">
+        <details><summary>Configurar sin escanear</summary><p>Ingresa esta clave en tu aplicación y selecciona códigos basados en tiempo.</p><code class="secret">{{ pending.secret }}</code></details>
+        <form (submit)="$event.preventDefault(); verify()">
+          <label for="setup-code">Código de seis dígitos</label>
+          <input id="setup-code" type="text" inputmode="numeric" autocomplete="one-time-code" [formField]="fields.code" [attr.aria-invalid]="!!error()">
+          <div class="actions"><button class="button-link primary" type="submit" [disabled]="busy()">{{ busy() ? 'Verificando…' : 'Activar autenticador' }}</button><button class="button-link" type="button" [disabled]="busy()" (click)="cancel()">Cancelar</button></div>
+        </form>
+      } @else {
+        <form (submit)="$event.preventDefault(); start()">
+          <label for="device-name">Nombre del dispositivo</label>
+          <input id="device-name" type="text" autocomplete="off" placeholder="Por ejemplo: teléfono principal" [formField]="fields.name" [attr.aria-invalid]="!!error()">
+          <button class="button-link primary" type="submit" [disabled]="busy()">Configurar autenticador</button>
+        </form>
+      }
+    </section>
+  }
+  <section class="security-card" aria-labelledby="recovery-heading">
+    <h2 id="recovery-heading">Si pierdes el dispositivo</h2>
+    <p>Puedes entrar con otro autenticador verificado. Si no tienes acceso a ninguno, contacta al propietario: deberá comprobar tu identidad y recuperar la cuenta desde Supabase.</p>
+    <p>Guarda el respaldo en un lugar seguro. No envíes claves ni códigos por WhatsApp.</p>
+  </section>
+</main>
