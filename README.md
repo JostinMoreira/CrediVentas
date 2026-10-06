@@ -8,15 +8,16 @@ Catálogo de productos para el hogar y el campo. Los clientes exploran artículo
 - **Siete migraciones aplicadas desde cero con Docker**; permisos, sesiones reales de Auth, MFA y cargas/borrados de imágenes comprobados en Supabase local.
 - `npm audit`: **0 vulnerabilidades conocidas** en la última consulta de esa fecha.
 - Catálogo y ficha revisados en tamaños de móvil; correcciones de seguridad aplicadas al esquema remoto.
+- Las dos imágenes PNG activas se optimizaron a WebP; las cuatro fotos activas ahora suman 264.288 bytes (117.657 bytes menos, aproximadamente 31 %), y las fichas públicas cargan correctamente.
 
-Quedan copias externas, publicación y verificaciones adicionales. MFA está aplazado para una etapa posterior. Consulta la [lista priorizada de pendientes](docs/PENDIENTES.md) y los [resultados con su alcance](docs/CORRECCIONES-2026-10-05.md).
+La demostración está publicada en [CrediVentas en Vercel](https://browser-wine-eta.vercel.app/). Quedan verificaciones visuales y decisiones para una futura puesta en producción. El propietario aplazó MFA y decidió continuar sin copias externas por ahora. Consulta la [lista priorizada de pendientes](docs/PENDIENTES.md) y los [resultados con su alcance](docs/CORRECCIONES-2026-10-05.md).
 
 ## Funciones
 
 - Catálogo paginado, categorías y búsqueda en servidor que ignora tildes y mayúsculas.
 - Selección editorial mediante `destacado`; si no hay destacados, se muestran productos disponibles. No se presenta como una clasificación de popularidad.
 - Ficha por ID, descripción, especificaciones, galería, ampliación y enlace de WhatsApp.
-- Panel con acceso administrativo, creación/edición/borrado, estados **Activo** y **Oculto**, validación y reintentos.
+- Panel en [una dirección separada](https://crediventas-admin.vercel.app/admin), protegido además por Vercel Authentication; creación/edición/borrado, estados **Activo** y **Oculto**, validación y reintentos.
 - Inventario adaptable: tarjetas con imagen y acciones visibles en móvil, dos columnas en tablet y tabla en escritorio.
 - Especificaciones técnicas con campos fijos para Marca, Modelo, Color y Garantía, más características adicionales.
 - Fotos completas y centradas; nuevas cargas WebP con miniaturas y compresor servido desde la aplicación.
@@ -83,7 +84,7 @@ Las comprobaciones de permisos se ejecutan dentro de una transacción que termin
 Get-Content supabase/tests/roles.sql | docker exec -i supabase_db_CrediVentas psql -U postgres -d postgres -v ON_ERROR_STOP=1
 ```
 
-Los datos de prueba están dentro de ese SQL; no se añaden productos ficticios permanentes al catálogo. El workflow de GitHub Actions está configurado para levantar una base limpia y ejecutar estas comprobaciones; su ejecución remota aún está pendiente.
+Los datos de prueba están dentro de ese SQL; no se añaden productos ficticios permanentes al catálogo. El workflow de GitHub Actions ejecuta compilación, pruebas, auditoría de dependencias y verificaciones contra una instancia Supabase local desechable. Usa valores ficticios para la configuración pública y no necesita secretos de GitHub ni accede al proyecto remoto. Se activa al subir cambios o abrir un pull request; no publica a Vercel.
 
 Ejecuta también `npm run test:db` para comprobar sesiones reales de Auth, permisos y cargas/borrados de Storage. Crea cuentas y artículos temporales, los limpia al terminar y conserva sus eventos en la auditoría privada local. Requiere la CLI y Docker disponibles en PATH. Las claves locales se leen internamente; no se guardan en archivos ni se imprimen. El script rechaza servidores remotos.
 
@@ -138,25 +139,38 @@ El catálogo restaura posición y desplaza a anclas dejando espacio para la cabe
 
 ## Publicación
 
-En Vercel:
+La demostración pública está en [browser-wine-eta.vercel.app](https://browser-wine-eta.vercel.app/). El panel está en [crediventas-admin.vercel.app/admin](https://crediventas-admin.vercel.app/admin); requiere primero pertenecer al proyecto en Vercel y después entrar con la cuenta administrativa de la aplicación. En el dominio público, `/login` y `/admin` responden 403, incluso con una sesión de la aplicación. Esta separación se comprobó en los dominios publicados el 6 de octubre de 2026. HTTPS, la reescritura de rutas y las cabeceras configuradas respondieron correctamente.
+
+Para futuras publicaciones en Vercel:
 
 - Configura las tres variables públicas en el entorno de build.
-- Usa `npm run build` y `dist/crediventas-app/browser`.
-- `vercel.json` incluye reescritura SPA, protección contra marcos, MIME sniffing, política de referencia, permisos del navegador y una CSP completa **en observación**.
+- Usa `npm run build` y `dist/crediventas-app/browser`. Después prepara la configuración de cada proyecto con `node scripts/prepare-vercel.mjs admin` o `node scripts/prepare-vercel.mjs public` antes de desplegar esa carpeta. Publica primero el panel protegido y comprueba su acceso; publica después el catálogo público.
+- `vercel.json` incluye reescritura SPA, bloqueo del login y panel en el proyecto público, protección contra marcos, MIME sniffing, política de referencia, permisos del navegador y una CSP completa **en observación**. La preparación `admin` retira solo el bloqueo de rutas para el proyecto protegido.
 - La política completa `Content-Security-Policy-Report-Only` informa infracciones en la consola; no las bloquea ni las envía a un recolector. La política mínima de marcos/objetos/base sí se aplica.
-- Comprueba las cabeceras, enlaces directos y Auth contra el dominio real antes de ampliar la CSP.
+- Comprueba las cabeceras, enlaces directos y Auth contra el dominio elegido antes de ampliar la CSP.
 - Netlify u otro alojamiento requieren reglas equivalentes específicas del proveedor.
 
 No se publica automáticamente desde el trabajo local.
 
+Publicación manual de ambos proyectos desde esta carpeta:
+
+```powershell
+npm run build
+node scripts/prepare-vercel.mjs admin
+npx vercel deploy dist/crediventas-app/browser --prod --yes --scope chostinmoreira-1369s-projects --project crediventas-admin
+node scripts/prepare-vercel.mjs public
+npx vercel deploy dist/crediventas-app/browser --prod --yes --scope chostinmoreira-1369s-projects --project browser
+```
+
+El proyecto `crediventas-admin` debe conservar Vercel Authentication con **All Deployments**. Si esa protección se desactiva, el panel pasa a ser visible en su dominio y en sus despliegues anteriores. No publicar la configuración `admin` en el proyecto `browser`.
+
 ## Qué falta por hacer
 
-1. Confirmar el acceso del administrador real y revisar su contraseña antes de endurecer los requisitos de **Auth alojado**. El registro público ya está cerrado y el cambio seguro de contraseña está activo.
-2. Activar el segundo factor en la cuenta administrativa y en la cuenta del titular de Supabase. El flujo TOTP y la exigencia de AAL2 para administradores inscritos ya están implementados.
-3. Establecer copias de datos e imágenes y ensayar su restauración en un entorno aislado. El plan Free actual no incluye copias programadas de Supabase.
-4. Completar la revisión del panel con sesión real, accesibilidad, galería con varias fotos y dispositivos reales.
-5. Al final, verificar el despliegue en el dominio real, incluyendo HTTPS, cabeceras y CSP.
-6. Preparar vistas previas de redes, monitorización remota y mantenimiento de imágenes/auditoría.
+1. Revisar dispositivos físicos, lector de pantalla y zoom del navegador. El inventario publicado se comprobó con sesión administrativa a 390, 768 y 1280 px; la galería de dos fotos reales del Iphone 14 pro pasó.
+2. Para una futura puesta en producción, decidir el dominio, revisar los requisitos de contraseña, las URLs de Auth y la política CSP observada.
+3. Evaluar vistas previas de redes, monitorización remota y mantenimiento de imágenes/auditoría según el uso real.
+
+MFA y las copias externas están aplazados por decisión del propietario. El plan Free de Supabase no incluye copias programadas: si se prescinde de una copia externa, una pérdida o borrado de datos puede ser irrecuperable.
 
 Los requisitos para dar por terminado cada punto están en [PENDIENTES.md](docs/PENDIENTES.md).
 

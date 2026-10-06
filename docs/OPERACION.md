@@ -2,6 +2,8 @@
 
 ## Estado verificado el 5 de octubre de 2026
 
+**Actualización del 6 de octubre:** el administrador real inició sesión y se completó en el proyecto remoto la creación, edición y eliminación de un producto oculto de prueba. Quedaron los cinco productos originales. La demostración está publicada en `https://browser-wine-eta.vercel.app/` y el panel en `https://crediventas-admin.vercel.app/admin`. Las rutas `/login` y `/admin` del dominio público devuelven 403. El proyecto administrativo tiene Vercel Authentication para todos los despliegues: una visita sin sesión de Vercel redirige a su acceso y, con sesión válida, se muestra el login de la aplicación. El panel se comprobó con sesión real a 390, 768 y 1280 px; no desborda horizontalmente y usa botones de 48 px en móvil. La ficha del Iphone 14 pro mostró y permitió alternar sus dos fotos reales. Después se optimizaron a WebP las dos fotos PNG activas: las cuatro fotos activas pesan 264.288 bytes, 117.657 bytes menos que antes; las fichas públicas se cargaron correctamente. El propietario aplazó MFA y decidió continuar sin copias externas durante esta etapa.
+
 - RLS de productos y Storage inspeccionada. Acceso anónimo limitado a SELECT; sin TRUNCATE para clientes.
 - Pruebas con roles anónimo, autenticado común, metadatos de usuario falsificados y administrador aprobadas. Todos los datos de prueba se revirtieron.
 - Un administrador de aplicación existente; ninguno tenía un factor MFA verificado en la inspección. No se le modificaron credenciales.

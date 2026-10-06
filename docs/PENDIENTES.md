@@ -44,38 +44,43 @@ Estado revisado el **6 de octubre de 2026**. Esta lista concentra el trabajo res
 
 **Terminado cuando se retome:** el administrador real puede entrar con segundo factor, dispone de un respaldo y se ha ensayado su recuperación. El código y las políticas ya están aplicados.
 
-### 3. Publicación y dominio
+### 3. Dominio definitivo
 
-**Aplazado hasta el final por decisión del propietario.**
+La demostración pública está en `https://browser-wine-eta.vercel.app/` y el panel en `https://crediventas-admin.vercel.app/admin`. El dominio público bloquea `/login` y `/admin` con 403; el proyecto administrativo exige Vercel Authentication en todos los despliegues y luego el login de la aplicación. El catálogo, la ficha directa, HTTPS y las cabeceras configuradas se comprobaron el 6 de octubre. Un dominio propio para producción se decidirá más adelante.
 
-- [ ] Definir alojamiento y dominio; configurar las variables públicas y URLs de Auth.
-- [ ] Comprobar HTTPS, cabeceras, rutas directas, catálogo, acceso administrativo y enlace de WhatsApp.
+- [x] Publicar la demostración en Vercel con variables públicas y verificar catálogo, ficha directa, HTTPS, cabeceras, rutas directas y enlace de WhatsApp.
+- [x] Separar el panel en un proyecto Vercel protegido y bloquear las rutas administrativas del proyecto público. Comprobado en ambos dominios con y sin sesión de Vercel.
+- [ ] Elegir el dominio definitivo y revisar las URLs de Auth para ese dominio.
+- [x] Confirmar que el administrador real accede al inventario publicado y que los cinco productos aparecen; el recorrido de crear, editar y borrar ya se probó en el proyecto remoto antes de esta publicación.
 - [ ] Revisar las infracciones de la CSP completa en observación y ajustar sus orígenes antes de pasarla a bloqueo.
 
-**Terminado cuando:** el despliegue real supera la [revisión de publicación](OPERACION.md#revisión-de-publicación). Falta el dominio y el despliegue; las cabeceras versionadas aún no se verificaron por HTTPS.
+**Terminado cuando:** el dominio definitivo supera la [revisión de publicación](OPERACION.md#revisión-de-publicación). La CSP completa sigue en observación.
 
-### 4. Copias y recuperación
+### 4. Copias y recuperación (aplazadas)
+
+**Decisión del propietario:** continuar sin copia externa por ahora. Esto acepta la posibilidad de perder de forma permanente los productos, imágenes y otros datos si ocurre un borrado o una falla sin recuperación disponible. Se retomará antes de depender del sitio para ventas reales.
 
 - [x] Confirmar plan y disponibilidad: Free, sin backups programados de Supabase.
 - [x] Preparar comandos de exportación de base de datos y archivos de Storage en [OPERACION.md](OPERACION.md#exportación-manual-en-windows-pendiente-de-definir-destino-seguro).
-- [ ] Definir y establecer una estrategia de copia externa para el plan actual o contratar un plan con backups y confirmar su retención/PITR.
-- [ ] Definir pérdida de datos y tiempo de recuperación tolerables.
-- [ ] Cubrir tanto base de datos como archivos de Storage y proteger las copias fuera del repositorio.
-- [ ] Restaurar una copia real en un entorno aislado y registrar resultados.
+- [ ] (Aplazado) Definir y establecer una estrategia de copia externa para el plan actual o contratar un plan con backups y confirmar su retención/PITR.
+- [ ] (Aplazado) Definir pérdida de datos y tiempo de recuperación tolerables.
+- [ ] (Aplazado) Cubrir tanto base de datos como archivos de Storage y proteger las copias fuera del repositorio.
+- [ ] (Aplazado) Restaurar una copia real en un entorno aislado y registrar resultados.
 
 **Terminado cuando:** se recuperan datos e imágenes y se comprueban conteos, búsqueda, permisos y tiempo de restauración. El panel indica expresamente que Free no incluye copias del proyecto; es necesario establecer una estrategia antes de considerar cubierta la recuperación. Procedimiento en [OPERACION.md](OPERACION.md#copias-y-recuperación).
 
 ## Prioridad 2: completar la verificación de uso
 
 - [x] Publicar el nuevo inventario móvil. Implementado y compilado; tres pruebas del panel aprobadas. El bloqueo de autorización quedó resuelto el 6 de octubre; Vercel confirmó el despliegue `dpl_GfLtv34sjBt9nvb6yqbrxFz2mqXw` como Ready y asignó `https://browser-wine-eta.vercel.app`.
-- [ ] Revisar visualmente el inventario publicado con una sesión administrativa en móvil y escritorio.
+- [x] Revisar el inventario publicado con sesión administrativa a 390, 768 y 1280 px: cinco productos; tarjetas en móvil y tablet, tabla en escritorio; sin desbordamiento horizontal en las tres anchuras.
 
 - [x] Abrir el formulario y verificar errores de validación con una sesión administrativa temporal local a 320 px.
 - [x] Completar creación, edición y borrado en navegador con sesión autorizada; los reintentos de error siguen cubiertos por pruebas automatizadas y requieren una falla real controlada para verificarlos manualmente.
-- [ ] Comprobar una galería con varias fotografías reales; las pruebas de cliente usan imágenes simuladas.
+- [x] Comprobar una galería con dos fotografías reales en la ficha del Iphone 14 pro: se muestran ambas, la miniatura cambia la imagen activa y el indicador actualiza “Imagen 2 de 2”.
+- [x] Optimizar las dos imágenes PNG activas a WebP y comprobar las fichas publicadas; las cuatro imágenes activas suman 264.288 bytes, frente a 381.945 bytes antes del cambio (117.657 bytes menos, aproximadamente 31 %).
 - [ ] Revisar dispositivos reales, lector de pantalla y zoom del navegador. El recorrido básico con teclado ya pasó a 320 px.
 - [x] Medir la portada con Lighthouse móvil en compilación de producción servida localmente; resultados y límites en [CORRECCIONES-2026-10-05.md](CORRECCIONES-2026-10-05.md#rendimiento-móvil).
-- [ ] Optimizar las dos imágenes PNG existentes y comprobar tiempos/caché en el dominio real. La prueba local aún estima 186 KiB de ahorro en imágenes y un LCP de 6,4 s.
+- [ ] Comprobar tiempos/caché en dispositivos reales y volver a medir LCP en el dominio publicado. La prueba local anterior estimó 186 KiB de ahorro en imágenes y un LCP de 6,4 s; el peso de las imágenes activas se redujo en producción, pero no se repitió una medición de rendimiento remota.
 
 **Terminado cuando:** quedan evidencias de los recorridos y se corrigen los problemas encontrados. Los tamaños de los archivos de compilación no equivalen a tiempos de carga medidos.
 
@@ -83,6 +88,7 @@ La cuenta temporal local usada en la revisión anterior fue retirada. El 6 de oc
 
 ## Prioridad 3: visibilidad y mantenimiento
 
+- [ ] Publicar los cambios en la rama `test` y confirmar en GitHub Actions que compilen la app, pasen las pruebas y la auditoría, y terminen las pruebas con Supabase local. El workflow usa solo datos ficticios y no requiere secretos del repositorio ni modifica Vercel o Supabase remoto.
 - [ ] Evaluar prerender/SSR con el dominio definitivo y comprobar vistas previas de redes y metadatos de fichas sin JavaScript.
 - [ ] Elegir un recolector de errores remoto, definir anonimización/retención y verificar recepción de eventos. El diagnóstico actual es local.
 - [x] Preparar y ejecutar un [inventario de solo lectura](../supabase/maintenance/catalog_inventory.sql): 2 objetos referenciados y 0 huérfanos en el proyecto remoto.
@@ -98,4 +104,4 @@ La portada utiliza destacados editoriales. Una clasificación de “más elegido
 
 ## Fuera del alcance actual
 
-La ejecución remota del workflow de GitHub queda aplazada por decisión del propietario. La verificación local con Docker y las pruebas de aplicación ya están documentadas.
+La configuración del workflow está versionada en `.github/workflows/quality.yml`; falta publicar los cambios actuales y revisar una ejecución remota satisfactoria.

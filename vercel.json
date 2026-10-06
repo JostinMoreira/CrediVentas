@@ -48,6 +48,12 @@
       ]
     }
   ],
+  "routes": [
+    {
+      "src": "/(login|admin)(/.*)?",
+      "mitigate": { "action": "deny" }
+    }
+  ],
   "rewrites": [
     {
       "source": "/(.*)",
