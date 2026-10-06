@@ -1,18 +1,19 @@
 <article class="card">
-  <a class="product-link" [routerLink]="['/producto', product.id]" [attr.aria-label]="'Ver detalles de ' + product.nombre">
+  <a class="product-link" [routerLink]="['/producto', product.id]">
     <div class="card-img-container">
       @if (product.imagenUrl && !imageFailed()) {
-        <img [src]="product.imagenUrl" [alt]="product.nombre" loading="lazy" decoding="async" width="400" height="400" (error)="onImageError()">
+        <img [src]="product.imagenUrl" alt="" [attr.loading]="priority ? 'eager' : 'lazy'" [attr.fetchpriority]="priority ? 'high' : null" decoding="async" width="400" height="400" (error)="onImageError()">
       } @else { <div class="image-placeholder">Imagen no disponible</div> }
     </div>
     <div class="card-content">
       <span class="category-label">{{ product.categoria }}</span>
-      <h3 class="card-title">{{ product.nombre }}</h3>
+      @if (headingLevel === 2) { <h2 class="card-title">{{ product.nombre }}</h2> }
+      @else { <h3 class="card-title">{{ product.nombre }}</h3> }
       <p class="card-price">{{ product.precio | currency:'USD':'symbol':'1.2-2':'es-EC' }}</p>
     </div>
   </a>
   <div class="card-actions">
-    <a class="details-link" [routerLink]="['/producto', product.id]">Ver producto</a>
-    <a class="button-link whatsapp" [href]="whatsappUrl()" target="_blank" rel="noopener noreferrer" [attr.aria-label]="'Consultar ' + product.nombre + ' por WhatsApp'">Pedir por WhatsApp</a>
+    <a class="details-link" [routerLink]="['/producto', product.id]" [attr.aria-label]="'Ver producto: ' + product.nombre">Ver producto</a>
+    <a class="button-link whatsapp" [href]="whatsappUrl()" target="_blank" rel="noopener noreferrer" [attr.aria-label]="'Pedir por WhatsApp: ' + product.nombre">Pedir por WhatsApp</a>
   </div>
 </article>

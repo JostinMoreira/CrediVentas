@@ -9,6 +9,8 @@ import { productWhatsAppUrl } from '../../../core/models/whatsapp';
 })
 export class ProductCard implements OnChanges {
   @Input({ required: true }) product!: Product;
+  @Input() headingLevel: 2 | 3 = 3;
+  @Input() priority = false;
   readonly imageFailed = signal(false);
   ngOnChanges(): void { this.imageFailed.set(false); }
   onImageError(): void { this.imageFailed.set(true); }

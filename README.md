@@ -2,14 +2,14 @@
 
 Catálogo de productos para el hogar y el campo. Los clientes exploran artículos y consultan por WhatsApp; los administradores gestionan productos e imágenes.
 
-## Estado al 5 de octubre de 2026
+## Estado al 6 de octubre de 2026
 
-- Compilación de producción correcta y **61 pruebas aprobadas en 16 archivos**.
-- **Seis migraciones aplicadas desde cero con Docker**; permisos, sesiones reales de Auth y cargas/borrados de imágenes comprobados en Supabase local.
+- Compilación de producción correcta y **83 pruebas aprobadas en 18 archivos**.
+- **Siete migraciones aplicadas desde cero con Docker**; permisos, sesiones reales de Auth, MFA y cargas/borrados de imágenes comprobados en Supabase local.
 - `npm audit`: **0 vulnerabilidades conocidas** en la última consulta de esa fecha.
 - Catálogo y ficha revisados en tamaños de móvil; correcciones de seguridad aplicadas al esquema remoto.
 
-Quedan ajustes de Auth en producción, MFA, publicación, copias y verificaciones adicionales. Consulta la [lista priorizada de pendientes](docs/PENDIENTES.md) y los [resultados con su alcance](docs/CORRECCIONES-2026-10-05.md).
+Quedan copias externas, publicación y verificaciones adicionales. MFA está aplazado para una etapa posterior. Consulta la [lista priorizada de pendientes](docs/PENDIENTES.md) y los [resultados con su alcance](docs/CORRECCIONES-2026-10-05.md).
 
 ## Funciones
 
@@ -17,8 +17,10 @@ Quedan ajustes de Auth en producción, MFA, publicación, copias y verificacione
 - Selección editorial mediante `destacado`; si no hay destacados, se muestran productos disponibles. No se presenta como una clasificación de popularidad.
 - Ficha por ID, descripción, especificaciones, galería, ampliación y enlace de WhatsApp.
 - Panel con acceso administrativo, creación/edición/borrado, estados **Activo** y **Oculto**, validación y reintentos.
+- Especificaciones técnicas con campos fijos para Marca, Modelo, Color y Garantía, más características adicionales.
 - Fotos completas y centradas; nuevas cargas WebP con miniaturas y compresor servido desde la aplicación.
 - Limpieza de imágenes desvinculadas, con comprobación de referencias y cola local de reintentos.
+- Modo oscuro con preferencia del sistema y selección guardada en el navegador.
 - Interfaz adaptable a móvil, controles accesibles y respeto por movimiento reducido.
 
 ## Tecnología
@@ -120,7 +122,7 @@ Consulta [operación y seguridad](docs/OPERACION.md) para registro público, con
 
 - Nombre: 1–160 caracteres; categoría: 1–80; descripción: hasta 5000.
 - Precio: desde 0,01 hasta 999.999.999,99 USD, dos decimales.
-- Hasta 40 especificaciones con formato `Nombre: Valor`; se rechazan líneas inválidas y claves duplicadas.
+- Hasta 40 especificaciones. Los campos generales tienen etiquetas fijas y solo requieren el valor; las adicionales usan `Nombre: Valor`. Se rechazan líneas inválidas y claves duplicadas.
 - La interfaz exige de 1 a 10 imágenes. Se aceptan JPEG, PNG, WebP y AVIF hasta 20 MB por archivo.
 - Las cargas nuevas generan una imagen de hasta 1200 px y una miniatura de 180 px; el tamaño final depende de la compresión.
 - Los reintentos conservan el ID del producto para evitar duplicados tras perder una respuesta.
@@ -148,11 +150,11 @@ No se publica automáticamente desde el trabajo local.
 
 ## Qué falta por hacer
 
-1. Cerrar el registro público y revisar contraseñas en **Auth alojado**. La configuración local ya está probada; no cambia esos ajustes remotos.
-2. Incorporar enrolamiento y desafío MFA para el administrador antes de exigir AAL2.
-3. Ejecutar el workflow en GitHub y verificar el despliegue en el dominio real, incluyendo HTTPS, cabeceras y CSP.
-4. Confirmar copias de datos e imágenes y ensayar su restauración en un entorno aislado.
-5. Completar la revisión del panel con sesión real, accesibilidad, galería con varias fotos y dispositivos reales.
+1. Confirmar el acceso del administrador real y revisar su contraseña antes de endurecer los requisitos de **Auth alojado**. El registro público ya está cerrado y el cambio seguro de contraseña está activo.
+2. Activar el segundo factor en la cuenta administrativa y en la cuenta del titular de Supabase. El flujo TOTP y la exigencia de AAL2 para administradores inscritos ya están implementados.
+3. Establecer copias de datos e imágenes y ensayar su restauración en un entorno aislado. El plan Free actual no incluye copias programadas de Supabase.
+4. Completar la revisión del panel con sesión real, accesibilidad, galería con varias fotos y dispositivos reales.
+5. Al final, verificar el despliegue en el dominio real, incluyendo HTTPS, cabeceras y CSP.
 6. Preparar vistas previas de redes, monitorización remota y mantenimiento de imágenes/auditoría.
 
 Los requisitos para dar por terminado cada punto están en [PENDIENTES.md](docs/PENDIENTES.md).

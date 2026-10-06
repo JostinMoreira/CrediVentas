@@ -8,7 +8,9 @@ Este documento actualiza el estado de la [auditoría inicial](AUDITORIA-2026-10-
 | --- | --- |
 | Dependencias | Angular/CLI/build 22.2.1 y lockfile actualizado; Supabase JS y compresor con versión exacta. |
 | Acceso | Guard con usuario validado por Auth y rol en app_metadata; rechazo de cuentas comunes y reacción a pérdida de sesión. |
+| MFA | Pantalla de configuración TOTP, desafío tras el login y protección RLS para cuentas administrativas con un factor verificado. |
 | Login e inventario | Estado reactivo después de operaciones asíncronas, errores visibles y bloqueo de envíos duplicados. |
+| Contraseña de administrador | El login identifica `weak_password` y explica que el propietario debe restablecer la credencial antes de entrar. |
 | Formulario | Activo/Oculto, límites de datos, especificaciones inválidas o repetidas rechazadas, categorías editables y etiquetas asociadas a IDs únicos. |
 | Catálogo | Paginación y filtros en servidor, búsqueda sin tildes, conteo y limpieza de filtros, reintentos y rechazo de respuestas obsoletas. |
 | Ficha | Consulta directa por ID, filtro público Activo, reacción a cambio de ID, estados de error y ausencia separados. |
@@ -29,12 +31,13 @@ La portada usa selección editorial cuando existen productos destacados. Con el 
 
 | Comprobación | Resultado |
 | --- | --- |
-| Compilación de producción | Correcta, sin avisos de presupuesto. Inicial: **282,40 kB**; transferencia estimada: **76,17 kB**. |
-| Pruebas de aplicación | **61 aprobadas en 16 archivos**. |
-| npm audit | **0 vulnerabilidades conocidas** en la consulta final del 5 de octubre. |
+| Compilación de producción | Correcta, sin avisos de presupuesto. Inicial: **288,92 kB**; transferencia estimada: **77,72 kB** en la última comprobación. |
+| Pruebas de aplicación | **83 aprobadas en 18 archivos**. |
+| npm audit | **0 vulnerabilidades conocidas** en la consulta del 5 de octubre. |
 | Recurso del compresor | Presente en la salida de producción, bajo assets/vendor. |
 | SQL por roles | Anónimo y cuenta común no escriben; ocultos protegidos; user_metadata falsificado no concede rol; CRUD de administrador, restricciones, búsqueda y registro de auditoría aprobados. |
-| Docker desde cero | Seis migraciones aplicadas correctamente en PostgreSQL local; pruebas SQL de roles aprobadas. |
+| Docker desde cero | Siete migraciones aplicadas correctamente en PostgreSQL local; pruebas SQL de roles aprobadas. |
+| MFA en Docker | TOTP real: enrolamiento, código erróneo, desafío tras nuevo login, dispositivo de respaldo y rechazo por RLS de un token AAL1 antiguo. |
 | Auth y Storage locales | Registro cerrado, sesiones reales, autorización por rol, carga de administrador y protección/borrado de imágenes referenciadas comprobados. Cuentas, productos e imágenes temporales limpiados. |
 | Reversión de pruebas remotas | Consulta posterior: **2 productos reales, 0 productos de prueba, 0 eventos de auditoría de prueba**. |
 | Limpieza de pruebas locales | Consulta posterior: **0 productos, 0 usuarios de prueba y 0 objetos de imagen**. Los eventos de auditoría local se conservan. |
@@ -42,9 +45,26 @@ La portada usa selección editorial cuando existen productos destacados. Con el 
 | Navegación | Ancla deja título bajo cabecera; filtros y búsqueda sin tildes funcionan; ampliación se cierra con Escape y devuelve el foco. |
 | Pie móvil | El pie queda por encima del botón fijo al llegar al final. |
 | Login a 320 px | Campos inválidos identificados y foco dirigido al correo; no se enviaron credenciales de prueba a producción. |
+| Administración local a 320 px | Formulario abierto con sesión administrativa temporal; errores visibles y foco en el primer campo. Pantallas de seguridad y desafío MFA sin desbordamiento horizontal. |
+| Teclado público a 320 px | Portada y ficha abiertas con teclado; foco visible, ampliación con Enter, cierre con Escape y retorno del foco. Sin desbordamiento horizontal. |
 | Cambios finales | git diff --check sin errores. |
 
-El tamaño inicial mide los archivos iniciales de Angular, no toda la descarga posterior ni el tiempo de carga real. No se midieron métricas de usuarios o Lighthouse.
+El tamaño inicial mide los archivos iniciales de Angular, no toda la descarga posterior ni el tiempo de carga real. Las métricas Lighthouse siguientes son una simulación local, no datos de usuarios.
+
+### Rendimiento móvil
+
+Se midió la portada con Lighthouse 13.5.0 y Edge en emulación móvil, sirviendo la compilación de producción desde `127.0.0.1:4202`. El catálogo y las imágenes se solicitaron al Supabase remoto; el servidor estático local no configuraba caché HTTP. Son dos ejecuciones puntuales y los tiempos pueden variar con la red.
+
+| Métrica | Antes | Después |
+| --- | ---: | ---: |
+| Rendimiento | 56 | 71 |
+| Accesibilidad | 94 | 100 |
+| SEO | 92 | 100 |
+| First Contentful Paint | 3,1 s | 3,1 s |
+| Largest Contentful Paint | 6,9 s | 6,4 s |
+| Desplazamiento acumulado (CLS) | 0,285 | 0,017 |
+
+La portada ahora consulta catálogo y destacados en paralelo y reserva espacio para las tarjetas destacadas durante la carga. La primera foto destacada se solicita con prioridad; se corrigieron contraste, orden de encabezados y nombres accesibles, y se añadió `robots.txt`. Lighthouse aún estima **186 KiB** de ahorro al modernizar las dos imágenes PNG existentes. La observación sobre caché procede del servidor local y debe repetirse después de publicar el sitio.
 
 ### Cobertura de las pruebas
 
@@ -62,17 +82,22 @@ Proyecto: gmzukzkyrburvhtjgfvb.
 - 20260929011836 — add_product_details_gallery.
 - 20261005054915 — harden_catalog_and_add_search.
 - 20261005060850 — reconcile_catalog_history.
+- 20261005165559 — require_mfa_for_enrolled_admins.
 
 La migración de reconciliación aplicó de forma idempotente el esquema base y la galería antes de registrar sus versiones anteriores. No eliminó ni editó los productos existentes.
 
 ## Pendientes concretos
 
-La lista vigente, con prioridades y criterios de finalización, está en [PENDIENTES.md](PENDIENTES.md). Incluye Auth alojado, MFA, CI remota, publicación, recuperación de copias y verificación ampliada. Las pruebas locales con Docker ya están completadas.
+La lista vigente, con prioridades y criterios de finalización, está en [PENDIENTES.md](PENDIENTES.md). Incluye Auth alojado, activación de MFA por el titular, publicación, recuperación de copias y verificación ampliada. GitHub queda aplazado por decisión del propietario; las pruebas locales con Docker ya están completadas.
 
 El aviso informativo de RLS sin políticas en private.catalog_audit es intencional: no hay acceso de clientes a la auditoría. [Descripción del asesor](https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy).
 
 ## Evidencia visual
 
 ![Catálogo a 390 píxeles](evidence/catalogo-mobile.jpg)
+
+![Configuración de seguridad a 320 píxeles](evidence/seguridad-mobile.png)
+
+![Desafío MFA a 320 píxeles](evidence/mfa-login-mobile.png)
 
 Consulta [OPERACION.md](OPERACION.md) para los pasos de configuración pendientes.

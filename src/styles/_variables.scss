@@ -21,7 +21,7 @@
   --color-card-foreground: #0F172A;
   
   --color-muted: #F1F5F9;           // Fondo tenue / neutro claro
-  --color-muted-foreground: #64748B;// Texto secundario accesible
+  --color-muted-foreground: #475569;// Texto secundario accesible
   --color-border: rgba(226, 232, 240, 0.85); // Borde suave
   --color-ring: #0369A1;            // Foco celeste accesible
 
@@ -65,6 +65,28 @@
   --z-overlay: 300;
   --z-modal: 400;
   --z-toast: 500;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --color-primary: #F87171;
+  --color-primary-hover: #FCA5A5;
+  --color-accent: #7DD3FC;
+  --color-accent-hover: #BAE6FD;
+  --color-accent-light: #12344A;
+  --color-background: #0B1220;
+  --color-foreground: #E5EDF7;
+  --color-card: rgba(21, 32, 49, 0.96);
+  --color-card-foreground: #E5EDF7;
+  --color-muted: #172438;
+  --color-muted-foreground: #B1C0D2;
+  --color-border: rgba(148, 163, 184, 0.24);
+  --color-ring: #7DD3FC;
+  --color-destructive: #F87171;
+  --color-success: #4ADE80;
+  --color-whatsapp: #16854A;
+  --glass-shadow: 0 8px 30px rgba(0, 0, 0, 0.28);
+  --glass-border: 1px solid rgba(148, 163, 184, 0.2);
 }
 
 $breakpoints: (

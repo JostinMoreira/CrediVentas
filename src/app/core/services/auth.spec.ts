@@ -38,6 +38,10 @@ describe('Auth permissions', () => {
     auth.signInWithPassword.mockResolvedValue({ data: {}, error: { code: 'invalid_credentials', message: 'sensitive detail' } });
     expect(await service.signIn('test@example.com', 'test')).toBe('Correo o contraseña incorrectos.');
   });
+  it('explains how to recover when the current password no longer meets the policy', async () => {
+    auth.signInWithPassword.mockResolvedValue({ data: {}, error: { code: 'weak_password', message: 'sensitive detail' } });
+    expect(await service.signIn('test@example.com', 'test')).toContain('Contacta al propietario');
+  });
   it('redirects after session loss and releases the subscription', async () => {
     callback('SIGNED_OUT', null); await Promise.resolve();
     expect(navigate).toHaveBeenCalledWith(['/login']);

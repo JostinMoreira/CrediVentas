@@ -31,6 +31,27 @@ describe('Product editing behavior', () => {
     expect(upload).not.toHaveBeenCalled(); expect(create).not.toHaveBeenCalled();
     expect(fixture.nativeElement.querySelector('#especificaciones').getAttribute('aria-invalid')).toBe('true');
   });
+  it('saves general specifications under fixed names alongside custom values', async () => {
+    fixture.componentInstance.productForm.patchValue({ marca: '  LG  ', modelo: 'M-1', especificacionesTexto: 'Capacidad: 400 litros' });
+    await fixture.componentInstance.onSubmit();
+    expect(create.mock.calls[0][0].especificaciones).toEqual({ Capacidad: '400 litros', Marca: 'LG', Modelo: 'M-1' });
+  });
+  it('loads existing specifications into fixed fields without dropping custom values', async () => {
+    fixture.componentInstance.productId = '11111111-1111-4111-8111-111111111111';
+    getById.mockResolvedValueOnce({
+      id: fixture.componentInstance.productId, nombre: 'Nevera', categoria: 'Hogar', precio: 10,
+      estado: 'Activo', especificaciones: { marca: 'LG', Capacidad: '400 litros' }, imagenUrl: 'https://example.com/a.webp', imagenes: [],
+    });
+    await fixture.componentInstance.loadProduct();
+    expect(fixture.componentInstance.productForm.controls.marca.value).toBe('LG');
+    expect(fixture.componentInstance.productForm.controls.especificacionesTexto.value).toBe('Capacidad: 400 litros');
+  });
+  it('rejects a repeated fixed field in other specifications', async () => {
+    fixture.componentInstance.productForm.patchValue({ marca: 'LG', especificacionesTexto: 'Marca: Otra' });
+    await fixture.componentInstance.onSubmit();
+    expect(create).not.toHaveBeenCalled();
+    expect(fixture.componentInstance.specificationError()).toContain('campo propio');
+  });
   it('compensates uploads after save failure and preserves input', async () => {
     create.mockRejectedValueOnce(new Error('failed'));
     await fixture.componentInstance.onSubmit(); await fixture.whenStable();

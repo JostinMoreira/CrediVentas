@@ -16,12 +16,25 @@
           <textarea id="descripcion" formControlName="descripcion" rows="4" [attr.maxlength]="limits.description" [attr.aria-invalid]="isFieldInvalid('descripcion')" aria-describedby="descripcion-help"></textarea>
           <small id="descripcion-help">Máximo 5000 caracteres. Incluye características, condiciones y beneficios reales.</small>
         </div>
-        <div class="field">
-          <label for="especificaciones">Especificaciones técnicas</label>
-          <textarea id="especificaciones" formControlName="especificacionesTexto" rows="5" placeholder="Marca: Ejemplo&#10;Capacidad: 400 litros" [attr.aria-invalid]="!!specificationError()" aria-describedby="especificaciones-help especificaciones-error"></textarea>
-          <small id="especificaciones-help">Una por línea: Nombre: Valor. Máximo 40, sin nombres repetidos.</small>
-          <span id="especificaciones-error" class="error-text">{{ specificationError() }}</span>
-        </div>
+        <fieldset class="specification-fields">
+          <legend>Especificaciones técnicas</legend>
+          <p class="text-muted">Los nombres ya están definidos. Completa solo los datos que correspondan a este artículo.</p>
+          <div class="specifications-grid">
+            @for (item of commonSpecifications; track item.key) {
+              <div class="field">
+                <label [for]="item.key">{{ item.label }}</label>
+                <input [id]="item.key" class="input-field" type="text" [formControlName]="item.key" maxlength="500" [placeholder]="item.placeholder" [attr.aria-invalid]="isFieldInvalid(item.key)" [attr.aria-describedby]="isFieldInvalid(item.key) ? item.key + '-error' : null">
+                @if (isFieldInvalid(item.key)) { <span class="error-text" [id]="item.key + '-error'">Máximo 500 caracteres.</span> }
+              </div>
+            }
+          </div>
+          <div class="field">
+            <label for="especificaciones">Otras especificaciones</label>
+            <textarea id="especificaciones" formControlName="especificacionesTexto" rows="4" placeholder="Capacidad: 400 litros" [attr.aria-invalid]="!!specificationError()" aria-describedby="especificaciones-help especificaciones-error"></textarea>
+            <small id="especificaciones-help">Opcional. Una por línea: Nombre: Valor. No repitas los campos anteriores.</small>
+            <span id="especificaciones-error" class="error-text">{{ specificationError() }}</span>
+          </div>
+        </fieldset>
         <div class="field">
           <label for="categoria">Categoría</label>
           <input id="categoria" class="input-field" list="categorias-sugeridas" formControlName="categoria" [attr.maxlength]="limits.category" placeholder="Elige o escribe una categoría" [attr.aria-invalid]="isFieldInvalid('categoria')" [attr.aria-describedby]="isFieldInvalid('categoria') ? 'categoria-error' : null">

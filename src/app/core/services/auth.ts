@@ -45,9 +45,11 @@ export class AuthService {
   async signIn(email: string, password: string): Promise<string | null> {
     try {
       const { data, error } = await this.supabase.auth.signInWithPassword({ email, password });
-      if (error) return error.code === 'invalid_credentials'
-        ? 'Correo o contraseña incorrectos.'
-        : 'No se pudo iniciar sesión. Revisa tus datos e inténtalo de nuevo.';
+      if (error) {
+        if (error.code === 'invalid_credentials') return 'Correo o contraseña incorrectos.';
+        if (error.code === 'weak_password') return 'La contraseña no cumple los requisitos de seguridad actuales. Contacta al propietario para restablecerla.';
+        return 'No se pudo iniciar sesión. Revisa tus datos e inténtalo de nuevo.';
+      }
       if (data.user?.app_metadata?.['is_admin'] !== true) {
         await this.supabase.auth.signOut();
         return 'Esta cuenta no tiene permisos de administración.';

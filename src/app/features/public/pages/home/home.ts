@@ -20,6 +20,7 @@ export class HomeComponent implements OnInit {
   private readonly meta = inject(Meta);
   readonly products = signal<Product[]>([]);
   readonly featuredProducts = signal<Product[]>([]);
+  readonly featuredLoading = signal(true);
   readonly hasEditorialSelection = signal(false);
   readonly categories = signal<string[]>([]);
   readonly isLoading = signal(true);
@@ -38,16 +39,19 @@ export class HomeComponent implements OnInit {
     this.meta.updateTag({ name: 'description', content: 'Explora electrodomésticos y productos para tu hogar y el campo. Consulta disponibilidad y compra por WhatsApp en CrediVentas.' });
     this.meta.updateTag({ name: 'robots', content: 'index,follow' });
     void this.loadCategories();
-    await this.loadProducts();
+    const [, featuredResult] = await Promise.allSettled([
+      this.loadProducts(),
+      this.service.getPage({ featuredOnly: true, pageSize: 4 }),
+    ]);
     if (this.destroyRef.destroyed) return;
     const initialProducts = this.products().slice(0, 4);
-    try {
-      const featured = await this.service.getPage({ featuredOnly: true, pageSize: 4 });
-      if (!this.destroyRef.destroyed) {
-        this.hasEditorialSelection.set(featured.products.length > 0);
-        this.featuredProducts.set(featured.products.length ? featured.products : initialProducts);
-      }
-    } catch { this.featuredProducts.set(initialProducts); }
+    if (featuredResult.status === 'fulfilled') {
+      this.hasEditorialSelection.set(featuredResult.value.products.length > 0);
+      this.featuredProducts.set(featuredResult.value.products.length ? featuredResult.value.products : initialProducts);
+    } else {
+      this.featuredProducts.set(initialProducts);
+    }
+    this.featuredLoading.set(false);
     if (!this.destroyRef.destroyed && this.route.snapshot.fragment === 'catalogo') {
       afterNextRender(() => this.viewport.scrollToAnchor('catalogo'), { injector: this.injector });
     }

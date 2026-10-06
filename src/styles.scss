@@ -23,6 +23,12 @@ html, body {
   background-attachment: fixed;
 }
 
+:root[data-theme='dark'] body {
+  background-color: var(--color-background);
+  background-image: radial-gradient(circle at 50% 0%, #18263A 0%, #101B2B 48%, var(--color-background) 100%);
+  color: var(--color-foreground);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
