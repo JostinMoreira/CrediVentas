@@ -88,7 +88,7 @@ La cuenta temporal local usada en la revisión anterior fue retirada. El 6 de oc
 
 ## Prioridad 3: visibilidad y mantenimiento
 
-- [ ] Publicar los cambios en la rama `test` y confirmar en GitHub Actions que compilen la app, pasen las pruebas y la auditoría, y terminen las pruebas con Supabase local. El workflow usa solo datos ficticios y no requiere secretos del repositorio ni modifica Vercel o Supabase remoto.
+- [x] Publicar en la rama `test` y confirmar en GitHub Actions compilación, pruebas, auditoría y pruebas de Supabase local. La ejecución [#7](https://github.com/JostinMoreira/CrediVentas/actions/runs/37535852581) pasó ambos jobs. Usa datos ficticios, no requiere secretos y no modifica Vercel ni Supabase remoto.
 - [ ] Evaluar prerender/SSR con el dominio definitivo y comprobar vistas previas de redes y metadatos de fichas sin JavaScript.
 - [ ] Elegir un recolector de errores remoto, definir anonimización/retención y verificar recepción de eventos. El diagnóstico actual es local.
 - [x] Preparar y ejecutar un [inventario de solo lectura](../supabase/maintenance/catalog_inventory.sql): 2 objetos referenciados y 0 huérfanos en el proyecto remoto.
@@ -104,4 +104,4 @@ La portada utiliza destacados editoriales. Una clasificación de “más elegido
 
 ## Fuera del alcance actual
 
-La configuración del workflow está versionada en `.github/workflows/quality.yml`; falta publicar los cambios actuales y revisar una ejecución remota satisfactoria.
+La configuración del workflow está versionada en `.github/workflows/quality.yml`. La rama `test` ejecuta CI al subir cambios y al abrir pull requests; queda disponible como verificación continua.

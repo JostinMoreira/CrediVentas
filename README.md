@@ -84,7 +84,7 @@ Las comprobaciones de permisos se ejecutan dentro de una transacción que termin
 Get-Content supabase/tests/roles.sql | docker exec -i supabase_db_CrediVentas psql -U postgres -d postgres -v ON_ERROR_STOP=1
 ```
 
-Los datos de prueba están dentro de ese SQL; no se añaden productos ficticios permanentes al catálogo. El workflow de GitHub Actions ejecuta compilación, pruebas, auditoría de dependencias y verificaciones contra una instancia Supabase local desechable. Usa valores ficticios para la configuración pública y no necesita secretos de GitHub ni accede al proyecto remoto. Se activa al subir cambios o abrir un pull request; no publica a Vercel.
+Los datos de prueba están dentro de ese SQL; no se añaden productos ficticios permanentes al catálogo. El workflow de GitHub Actions ejecuta compilación, pruebas, auditoría de dependencias y verificaciones contra una instancia Supabase local desechable. Usa valores ficticios para la configuración pública y no necesita secretos de GitHub ni accede al proyecto remoto. Se activa al subir cambios o abrir un pull request; no publica a Vercel. La ejecución [#7](https://github.com/JostinMoreira/CrediVentas/actions/runs/37535852581) pasó con los dos jobs correctos y sin los avisos de plataforma de la ejecución anterior.
 
 Ejecuta también `npm run test:db` para comprobar sesiones reales de Auth, permisos y cargas/borrados de Storage. Crea cuentas y artículos temporales, los limpia al terminar y conserva sus eventos en la auditoría privada local. Requiere la CLI y Docker disponibles en PATH. Las claves locales se leen internamente; no se guardan en archivos ni se imprimen. El script rechaza servidores remotos.
 
