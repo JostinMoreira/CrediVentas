@@ -17,6 +17,7 @@ Quedan copias externas, publicación y verificaciones adicionales. MFA está apl
 - Selección editorial mediante `destacado`; si no hay destacados, se muestran productos disponibles. No se presenta como una clasificación de popularidad.
 - Ficha por ID, descripción, especificaciones, galería, ampliación y enlace de WhatsApp.
 - Panel con acceso administrativo, creación/edición/borrado, estados **Activo** y **Oculto**, validación y reintentos.
+- Inventario adaptable: tarjetas con imagen y acciones visibles en móvil, dos columnas en tablet y tabla en escritorio.
 - Especificaciones técnicas con campos fijos para Marca, Modelo, Color y Garantía, más características adicionales.
 - Fotos completas y centradas; nuevas cargas WebP con miniaturas y compresor servido desde la aplicación.
 - Limpieza de imágenes desvinculadas, con comprobación de referencias y cola local de reintentos.

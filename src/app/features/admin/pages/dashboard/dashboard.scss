@@ -1,9 +1,35 @@
-.dashboard-page { padding-block: 32px 64px; }
-.dashboard-header { display: flex; flex-direction: column; gap: 20px; margin-bottom: 24px; h1 { margin-block: 16px 8px; } }
+.dashboard-page { padding-block: 24px 48px; color: var(--color-foreground); }
+.dashboard-header { display: flex; flex-direction: column; gap: 20px; margin-bottom: 24px; h1 { margin-block: 16px 8px; font-size: clamp(1.7rem, 4vw, 2.4rem); } }
 .dashboard-actions, .row-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
-.table-responsive { overflow-x: auto; border: 1px solid var(--color-border); border-radius: 16px; background: white; }
-.inventory-table { width: 100%; min-width: 650px; border-collapse: collapse; text-align: left; th, td { padding: 16px; border-bottom: 1px solid var(--color-border); } th { background: var(--color-muted); } }
-.product-cell { display: flex; gap: 12px; align-items: center; img { object-fit: contain; border-radius: 8px; } small { display: block; color: var(--color-accent); } }
+.inventory-heading { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 16px; h2 { margin: 0; font-size: 1.2rem; } span { color: var(--color-muted-foreground); font-size: .875rem; } }
+.table-responsive { border: 1px solid var(--color-border); border-radius: 16px; overflow: hidden; background: var(--color-card); }
+.inventory-table { width: 100%; border-collapse: collapse; text-align: left; th, td { padding: 16px; border-bottom: 1px solid var(--color-border); } th { background: var(--color-muted); } }
+.product-cell { display: flex; gap: 12px; align-items: center; img { flex-shrink: 0; object-fit: contain; border-radius: 8px; background: var(--color-muted); } small { display: block; margin-top: 4px; color: var(--color-accent); } }
+.product-name { min-width: 0; font-weight: 700; overflow-wrap: anywhere; }
+.mobile-label { display: none; }
 .state { display: inline-block; border-radius: 999px; padding: 5px 12px; background: var(--color-muted); font-size: .8rem; &.active { background: #dcfce7; color: #166534; } }
-.delete { color: var(--color-destructive); }
-@media (min-width: 768px) { .dashboard-header { flex-direction: row; align-items: center; justify-content: space-between; } }
+.delete { color: var(--color-destructive); &:disabled { opacity: .55; cursor: not-allowed; } }
+@media (min-width: 1100px) { .dashboard-header { flex-direction: row; align-items: center; justify-content: space-between; } }
+@media (max-width: 999px) {
+  .table-responsive { overflow: visible; border: 0; background: transparent; }
+  .inventory-table { display: block; }
+  .inventory-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .inventory-table tbody { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .inventory-table tr { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 12px; padding: 16px; border: 1px solid var(--color-border); border-radius: 16px; background: var(--color-card); }
+  .inventory-table td { display: block; min-width: 0; border: 0; padding: 0; overflow-wrap: anywhere; }
+  .inventory-table .product-cell { display: flex; }
+  .product-cell, .category-cell, .actions-cell, td[colspan] { grid-column: 1 / -1; }
+  .product-cell img { width: 72px; height: 72px; padding: 4px; }
+  .product-name { line-height: 1.45; }
+  .mobile-label { display: block; margin-bottom: 6px; color: var(--color-muted-foreground); font-size: .75rem; }
+  .price-cell strong { font-size: 1.05rem; }
+  .row-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); padding-top: 14px; border-top: 1px solid var(--color-border); }
+  .row-actions .text-link { justify-content: center; min-height: 48px; padding: 8px; border: 1px solid var(--color-border); border-radius: 8px; background: var(--color-muted); text-decoration: none; font-size: .875rem; }
+  .row-actions .delete { background: transparent; }
+  td[colspan] { padding-block: 24px; text-align: center; }
+}
+@media (min-width: 600px) and (max-width: 999px) { .inventory-table tbody { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 599px) {
+  .dashboard-actions { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; .primary { grid-row: 1; } app-ui-button { justify-self: center; } }
+  .pagination { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); span { grid-column: 1 / -1; grid-row: 1; text-align: center; } }
+}

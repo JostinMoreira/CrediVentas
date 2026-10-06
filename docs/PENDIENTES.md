@@ -67,6 +67,9 @@ Estado revisado el **6 de octubre de 2026**. Esta lista concentra el trabajo res
 
 ## Prioridad 2: completar la verificación de uso
 
+- [x] Publicar el nuevo inventario móvil. Implementado y compilado; tres pruebas del panel aprobadas. El bloqueo de autorización quedó resuelto el 6 de octubre; Vercel confirmó el despliegue `dpl_GfLtv34sjBt9nvb6yqbrxFz2mqXw` como Ready y asignó `https://browser-wine-eta.vercel.app`.
+- [ ] Revisar visualmente el inventario publicado con una sesión administrativa en móvil y escritorio.
+
 - [x] Abrir el formulario y verificar errores de validación con una sesión administrativa temporal local a 320 px.
 - [x] Completar creación, edición y borrado en navegador con sesión autorizada; los reintentos de error siguen cubiertos por pruebas automatizadas y requieren una falla real controlada para verificarlos manualmente.
 - [ ] Comprobar una galería con varias fotografías reales; las pruebas de cliente usan imágenes simuladas.

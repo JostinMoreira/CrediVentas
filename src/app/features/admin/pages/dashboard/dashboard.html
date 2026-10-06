@@ -12,23 +12,24 @@
   @if (uploads.pendingCleanup().length) {
     <div class="message" role="status"><p>Hay imágenes retiradas pendientes de limpieza.</p><button class="text-link" (click)="uploads.retryPendingCleanup()">Reintentar limpieza</button></div>
   }
-  <div class="table-responsive" [attr.aria-busy]="isLoading()" tabindex="0" role="region" aria-label="Inventario de productos">
-    <table class="inventory-table">
+  <div class="inventory-heading"><h2>Inventario</h2><span>{{ total() }} productos</span></div>
+  <div class="table-responsive" [attr.aria-busy]="isLoading()" role="region" aria-label="Inventario de productos">
+    <table class="inventory-table" role="table">
       <thead><tr><th scope="col">Producto</th><th scope="col">Categoría</th><th scope="col">Precio</th><th scope="col">Estado</th><th scope="col">Acciones</th></tr></thead>
-      <tbody>
+      <tbody role="rowgroup">
         @if (isLoading()) {
           <tr><td colspan="5">Cargando inventario…</td></tr>
         } @else {
           @for (product of products(); track product.id) {
-            <tr>
-              <td class="product-cell">
+            <tr role="row">
+              <td class="product-cell" role="cell">
                 @if (product.imagenUrl) { <img [src]="product.imagenUrl" alt="" width="56" height="56" loading="lazy"> }
-                <span>{{ product.nombre }} @if (product.destacado) { <small>Destacado</small> }</span>
+                <span class="product-name">{{ product.nombre }} @if (product.destacado) { <small>Destacado</small> }</span>
               </td>
-              <td>{{ product.categoria }}</td>
-              <td>{{ product.precio | currency:'USD':'symbol':'1.2-2':'es-EC' }}</td>
-              <td><span class="state" [class.active]="product.estado === 'Activo'">{{ product.estado }}</span></td>
-              <td><div class="row-actions">
+              <td class="category-cell" role="cell"><span class="mobile-label" aria-hidden="true">Categoría</span>{{ product.categoria }}</td>
+              <td class="price-cell" role="cell"><span class="mobile-label" aria-hidden="true">Precio</span><strong>{{ product.precio | currency:'USD':'symbol':'1.2-2':'es-EC' }}</strong></td>
+              <td class="state-cell" role="cell"><span class="mobile-label" aria-hidden="true">Visibilidad</span><span class="state" [class.active]="product.estado === 'Activo'">{{ product.estado }}</span></td>
+              <td class="actions-cell" role="cell"><div class="row-actions">
                 <a class="text-link" [routerLink]="['/admin/editar-producto', product.id]" [attr.aria-label]="'Editar ' + product.nombre">Editar</a>
                 <button class="text-link delete" [disabled]="deletingId() !== null" [attr.aria-label]="'Eliminar ' + product.nombre" (click)="deleteProduct(product)">{{ deletingId() === product.id ? 'Eliminando…' : 'Eliminar' }}</button>
               </div></td>
