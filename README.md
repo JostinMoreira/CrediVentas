@@ -2,15 +2,16 @@
 
 Catálogo de productos para el hogar y el campo. Los clientes exploran artículos y consultan por WhatsApp; los administradores gestionan productos e imágenes.
 
-## Estado al 6 de octubre de 2026
+## Estado al 7 de octubre de 2026
 
 - Compilación de producción correcta y **83 pruebas aprobadas en 18 archivos**.
 - **Siete migraciones aplicadas desde cero con Docker**; permisos, sesiones reales de Auth, MFA y cargas/borrados de imágenes comprobados en Supabase local.
 - `npm audit`: **0 vulnerabilidades conocidas** en la última consulta de esa fecha.
 - Catálogo y ficha revisados en tamaños de móvil; correcciones de seguridad aplicadas al esquema remoto.
 - Las dos imágenes PNG activas se optimizaron a WebP; las cuatro fotos activas ahora suman 264.288 bytes (117.657 bytes menos, aproximadamente 31 %), y las fichas públicas cargan correctamente.
+- GitHub Actions pasó compilación, 83 pruebas, auditoría de dependencias y pruebas de roles, Auth y Storage en Supabase local. [Última ejecución](https://github.com/JostinMoreira/CrediVentas/actions/runs/37536194199).
 
-La demostración está publicada en [CrediVentas en Vercel](https://browser-wine-eta.vercel.app/). Quedan verificaciones visuales y decisiones para una futura puesta en producción. El propietario aplazó MFA y decidió continuar sin copias externas por ahora. Consulta la [lista priorizada de pendientes](docs/PENDIENTES.md) y los [resultados con su alcance](docs/CORRECCIONES-2026-10-05.md).
+La demostración está publicada en [CrediVentas en Vercel](https://browser-wine-eta.vercel.app/). Está preparada para demostración; antes de usarla comercialmente hay que decidir dominio y recuperación de datos, y completar las revisiones indicadas al final de este README. El propietario aplazó MFA y decidió continuar sin copias externas por ahora.
 
 ## Funciones
 
@@ -84,7 +85,7 @@ Las comprobaciones de permisos se ejecutan dentro de una transacción que termin
 Get-Content supabase/tests/roles.sql | docker exec -i supabase_db_CrediVentas psql -U postgres -d postgres -v ON_ERROR_STOP=1
 ```
 
-Los datos de prueba están dentro de ese SQL; no se añaden productos ficticios permanentes al catálogo. El workflow de GitHub Actions ejecuta compilación, pruebas, auditoría de dependencias y verificaciones contra una instancia Supabase local desechable. Usa valores ficticios para la configuración pública y no necesita secretos de GitHub ni accede al proyecto remoto. Se activa al subir cambios o abrir un pull request; no publica a Vercel. La ejecución [#7](https://github.com/JostinMoreira/CrediVentas/actions/runs/37535852581) pasó con los dos jobs correctos y sin los avisos de plataforma de la ejecución anterior.
+Los datos de prueba están dentro de ese SQL; no se añaden productos ficticios permanentes al catálogo. El workflow de GitHub Actions ejecuta compilación, pruebas, auditoría de dependencias y verificaciones contra una instancia Supabase local desechable. Usa valores ficticios para la configuración pública y no necesita secretos de GitHub ni accede al proyecto remoto. Se activa al subir cambios o abrir un pull request; no publica a Vercel. La [ejecución #8](https://github.com/JostinMoreira/CrediVentas/actions/runs/37536194199) pasó con ambos jobs.
 
 Ejecuta también `npm run test:db` para comprobar sesiones reales de Auth, permisos y cargas/borrados de Storage. Crea cuentas y artículos temporales, los limpia al terminar y conserva sus eventos en la auditoría privada local. Requiere la CLI y Docker disponibles en PATH. Las claves locales se leen internamente; no se guardan en archivos ni se imprimen. El script rechaza servidores remotos.
 
@@ -118,7 +119,7 @@ Las imágenes del bucket son públicas. Ocultar un producto retira su ficha púb
 
 El registro `private.catalog_audit` conserva identificador de producto, actor, operación y fecha. No está expuesto a clientes y no copia los contenidos del producto.
 
-Consulta [operación y seguridad](docs/OPERACION.md) para registro público, contraseñas, MFA y copias.
+El registro público de Supabase está cerrado; el correo de administradores existentes sigue habilitado y el cambio de contraseña exige reautenticación cuando corresponde. Antes de endurecer la política, el titular debe comprobar que su contraseña actual puede iniciar sesión. La protección de contraseñas filtradas no está disponible en el plan Free.
 
 ## Validación e imágenes
 
@@ -164,21 +165,13 @@ npx vercel deploy dist/crediventas-app/browser --prod --yes --scope chostinmorei
 
 El proyecto `crediventas-admin` debe conservar Vercel Authentication con **All Deployments**. Si esa protección se desactiva, el panel pasa a ser visible en su dominio y en sus despliegues anteriores. No publicar la configuración `admin` en el proyecto `browser`.
 
-## Qué falta por hacer
+## Antes de producción
 
-1. Revisar dispositivos físicos, lector de pantalla y zoom del navegador. El inventario publicado se comprobó con sesión administrativa a 390, 768 y 1280 px; la galería de dos fotos reales del Iphone 14 pro pasó.
-2. Para una futura puesta en producción, decidir el dominio, revisar los requisitos de contraseña, las URLs de Auth y la política CSP observada.
-3. Evaluar vistas previas de redes, monitorización remota y mantenimiento de imágenes/auditoría según el uso real.
+- Elegir un dominio definitivo y actualizar/restringir las URLs de Auth. Por ahora los dominios de Vercel sirven para la demostración; el dominio público bloquea `/login` y `/admin`, y el panel separado exige Vercel Authentication y luego la sesión administrativa de la aplicación.
+- Revisar los requisitos de contraseña de Auth con el titular antes de endurecerlos. El login ya maneja el error de contraseña débil y orienta a recuperar la cuenta.
+- Revisar la CSP completa en modo `Report-Only` y ajustar los orígenes según infracciones observadas antes de bloquearla.
+- Comprobar el panel en dispositivos reales, con zoom y lector de pantalla, y volver a medir el rendimiento en el dominio publicado. Las revisiones con teclado y tamaños de 320–1280 px ya están hechas; Lighthouse local dio rendimiento 71, accesibilidad 100, SEO 100 y CLS 0,017.
+- Decidir si se necesitan vistas previas para redes, un recolector remoto de errores y una rutina/responsable para auditoría y limpieza de imágenes huérfanas. La cola actual de limpieza es local al navegador.
+- MFA está aplazado por decisión del propietario. También se decidió no configurar copias externas por ahora; el plan Free de Supabase no ofrece copias programadas. Antes de depender del sitio para ventas reales hay que activar una estrategia que cubra base de datos y fotos, y probar la restauración.
 
-MFA y las copias externas están aplazados por decisión del propietario. El plan Free de Supabase no incluye copias programadas: si se prescinde de una copia externa, una pérdida o borrado de datos puede ser irrecuperable.
-
-Los requisitos para dar por terminado cada punto están en [PENDIENTES.md](docs/PENDIENTES.md).
-
-## Calidad y estado
-
-- [Pendientes priorizados](docs/PENDIENTES.md).
-- [Auditoría inicial](docs/AUDITORIA-2026-10-05.md).
-- [Correcciones y comprobaciones](docs/CORRECCIONES-2026-10-05.md).
-- [Operación, copias y límites](docs/OPERACION.md).
-
-La auditoría es una revisión puntual; cero avisos en npm no garantiza ausencia de vulnerabilidades.
+La auditoría de dependencias y las demás comprobaciones son puntuales; que `npm audit` no encuentre vulnerabilidades no garantiza que el proyecto esté libre de ellas. Este README concentra las instrucciones y el estado. Las migraciones, pruebas SQL y consultas de mantenimiento permanecen en `supabase/` porque son archivos ejecutables del proyecto, no documentación duplicada.
