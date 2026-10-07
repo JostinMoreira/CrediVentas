@@ -9,7 +9,7 @@ Catálogo de productos para el hogar y el campo. Los clientes exploran artículo
 - `npm audit`: **0 vulnerabilidades conocidas** en la última consulta de esa fecha.
 - Catálogo y ficha revisados en tamaños de móvil; correcciones de seguridad aplicadas al esquema remoto.
 - Las dos imágenes PNG activas se optimizaron a WebP; las cuatro fotos activas ahora suman 264.288 bytes (117.657 bytes menos, aproximadamente 31 %), y las fichas públicas cargan correctamente.
-- GitHub Actions pasó compilación, 83 pruebas, auditoría de dependencias y pruebas de roles, Auth y Storage en Supabase local. [Última ejecución](https://github.com/JostinMoreira/CrediVentas/actions/runs/37536194199).
+- GitHub Actions pasó compilación, 83 pruebas, auditoría de dependencias y pruebas de roles, Auth y Storage en Supabase local. [Ejecución #9](https://github.com/JostinMoreira/CrediVentas/actions/runs/37698555126).
 
 La demostración está publicada en [CrediVentas en Vercel](https://browser-wine-eta.vercel.app/). Está preparada para demostración; antes de usarla comercialmente hay que decidir dominio y recuperación de datos, y completar las revisiones indicadas al final de este README. El propietario aplazó MFA y decidió continuar sin copias externas por ahora.
 
@@ -85,7 +85,7 @@ Las comprobaciones de permisos se ejecutan dentro de una transacción que termin
 Get-Content supabase/tests/roles.sql | docker exec -i supabase_db_CrediVentas psql -U postgres -d postgres -v ON_ERROR_STOP=1
 ```
 
-Los datos de prueba están dentro de ese SQL; no se añaden productos ficticios permanentes al catálogo. El workflow de GitHub Actions ejecuta compilación, pruebas, auditoría de dependencias y verificaciones contra una instancia Supabase local desechable. Usa valores ficticios para la configuración pública y no necesita secretos de GitHub ni accede al proyecto remoto. Se activa al subir cambios o abrir un pull request; no publica a Vercel. La [ejecución #8](https://github.com/JostinMoreira/CrediVentas/actions/runs/37536194199) pasó con ambos jobs.
+Los datos de prueba están dentro de ese SQL; no se añaden productos ficticios permanentes al catálogo. El workflow de GitHub Actions ejecuta compilación, pruebas, auditoría de dependencias y verificaciones contra una instancia Supabase local desechable. Usa valores ficticios para la configuración pública y no necesita secretos de GitHub ni accede al proyecto remoto. Se activa al subir cambios o abrir un pull request; no publica a Vercel. La [ejecución #9](https://github.com/JostinMoreira/CrediVentas/actions/runs/37698555126) pasó con ambos jobs.
 
 Ejecuta también `npm run test:db` para comprobar sesiones reales de Auth, permisos y cargas/borrados de Storage. Crea cuentas y artículos temporales, los limpia al terminar y conserva sus eventos en la auditoría privada local. Requiere la CLI y Docker disponibles en PATH. Las claves locales se leen internamente; no se guardan en archivos ni se imprimen. El script rechaza servidores remotos.
 
