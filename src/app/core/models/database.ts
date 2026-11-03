@@ -14,6 +14,18 @@ export type Database = {
   }
   public: {
     Tables: {
+      sales: {
+        Row: { id: string; created_at: string; sold_at: string; customer_name: string; product_name: string; model: string; serial_number: string; payment_type: 'contado' | 'credito'; payment_method: 'efectivo' | 'transferencia' | 'tarjeta' | 'otro'; total_amount: number; down_payment: number; installment_count: number; first_due_date: string | null; notes: string }
+        Insert: { id?: string; created_at?: string; sold_at?: string; customer_name: string; product_name: string; model?: string; serial_number?: string; payment_type: 'contado' | 'credito'; payment_method: 'efectivo' | 'transferencia' | 'tarjeta' | 'otro'; total_amount: number; down_payment?: number; installment_count?: number; first_due_date?: string | null; notes?: string }
+        Update: { id?: string; created_at?: string; sold_at?: string; customer_name?: string; product_name?: string; model?: string; serial_number?: string; payment_type?: 'contado' | 'credito'; payment_method?: 'efectivo' | 'transferencia' | 'tarjeta' | 'otro'; total_amount?: number; down_payment?: number; installment_count?: number; first_due_date?: string | null; notes?: string }
+        Relationships: []
+      }
+      sale_payments: {
+        Row: { id: string; sale_id: string; installment_number: number; amount: number; paid_at: string; created_at: string }
+        Insert: { id?: string; sale_id: string; installment_number: number; amount: number; paid_at?: string; created_at?: string }
+        Update: { id?: string; sale_id?: string; installment_number?: number; amount?: number; paid_at?: string; created_at?: string }
+        Relationships: [{ foreignKeyName: 'sale_payments_sale_id_fkey'; columns: ['sale_id']; isOneToOne: false; referencedRelation: 'sales'; referencedColumns: ['id'] }]
+      }
       productos: {
         Row: {
           categoria: string

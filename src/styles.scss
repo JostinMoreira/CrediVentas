@@ -38,3 +38,43 @@ html, body {
   }
   .home-page .loading-image { animation: none; }
 }
+
+.detail-backdrop { position: fixed; inset: 0; z-index: 100; background: #0b162199; }
+.detail-panel { position: fixed; inset: 0 0 0 auto; z-index: 101; width: min(100%, 440px); overflow-y: auto; padding: 28px; background: var(--color-background); box-shadow: -12px 0 40px #0002; }
+.detail-top { display: flex; justify-content: space-between; align-items: center; }
+.detail-top button { width: 40px; height: 40px; border: 1px solid var(--color-border); border-radius: 10px; background: transparent; color: var(--color-foreground); cursor: pointer; }
+.detail-panel h2 { margin: 24px 0 4px; }
+.detail-panel dl { margin: 32px 0; }
+.detail-panel dl div { display: flex; justify-content: space-between; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--color-border); }
+.detail-panel dt { color: var(--color-muted-foreground); }
+.detail-panel dd { margin: 0; font-weight: 700; text-align: right; }
+.detail-note { padding: 18px; border-radius: 14px; background: var(--color-muted); }
+.detail-note p { margin: 7px 0 0; color: var(--color-muted-foreground); font-size: .85rem; }
+
+@media (max-width: 999px) {
+  .tv-page .portfolio { border: 0; background: transparent; overflow: visible; }
+  .tv-page .section-heading { padding-inline: 0; }
+  .tv-page .toolbar { padding-inline: 0; }
+  .tv-page .table-wrap { overflow: visible; }
+  .tv-page table { display: block; min-width: 0; }
+  .tv-page thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .tv-page tbody { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .tv-page tr { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 12px; padding: 18px; border: 1px solid var(--color-border); border-radius: 16px; background: var(--color-card); }
+  .tv-page td { min-width: 0; padding: 0; border: 0; overflow-wrap: anywhere; }
+  .tv-page .tv-identity, .tv-page .tv-row-action, .tv-page td[colspan] { grid-column: 1 / -1; }
+  .tv-page .tv-identity { padding-bottom: 14px; border-bottom: 1px solid var(--color-border); }
+  .tv-page .tv-identity strong { font-size: 1rem; }
+  .tv-page .tv-mobile-label { display: block; margin-bottom: 7px; color: var(--color-muted-foreground); font-size: .75rem; }
+  .tv-page .tv-row-action { padding-top: 14px; border-top: 1px solid var(--color-border); }
+  .tv-page .tv-row-action button { width: 100%; min-height: 48px; background: var(--color-muted); color: var(--color-accent); font-weight: 700; }
+}
+@media (max-width: 599px) { .tv-page tbody { grid-template-columns: minmax(0, 1fr); } }
+
+.sale-form-panel { width: min(100%, 560px); }
+.sale-form { display: grid; gap: 16px; margin-top: 28px; }
+.sale-form label { display: grid; gap: 7px; color: var(--color-foreground); font-size: .84rem; font-weight: 700; }
+.sale-form input, .sale-form select, .sale-form textarea { width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid var(--color-border); border-radius: 10px; background: var(--color-background); color: var(--color-foreground); font: inherit; font-weight: 400; }
+.sale-form input:focus-visible, .sale-form select:focus-visible, .sale-form textarea:focus-visible { outline: 2px solid var(--color-ring); outline-offset: 2px; }
+.sale-form .form-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.sale-form button { justify-self: start; min-height: 46px; }
+@media (max-width: 460px) { .sale-form .form-pair { grid-template-columns: 1fr; } }

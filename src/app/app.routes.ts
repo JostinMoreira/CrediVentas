@@ -37,6 +37,13 @@ export const routes: Routes = [
         loadComponent: () => import('./features/admin/pages/security').then(m => m.Security),
     },
     {
+        path: 'admin/ventas',
+        title: 'Ventas y seguimiento',
+        canActivate: [authGuard],
+        loadComponent: () => import('./features/admin/pages/tv-financing/tv-financing').then(m => m.TvFinancing),
+    },
+    { path: 'admin/televisores', redirectTo: 'admin/ventas' },
+    {
         path: 'admin/nuevo-producto',
         title: 'Agregar Producto',
         canActivate: [authGuard],

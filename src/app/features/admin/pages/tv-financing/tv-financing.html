@@ -1,0 +1,78 @@
+<main class="container tv-page">
+  <header class="tv-header">
+    <div><a class="text-link" routerLink="/admin">← Volver al panel</a><h1>Ventas y seguimiento</h1><p class="text-muted">Registra productos vendidos y controla las cuotas pendientes.</p></div>
+    <button class="button-link primary" type="button" (click)="openForm()">+ Registrar venta</button>
+  </header>
+
+  @if (loadError()) { <div class="message error" role="alert">{{ loadError() }} <button type="button" class="text-link" (click)="load()">Reintentar carga</button></div> }
+  @if (notice()) { <p class="message" role="status">{{ notice() }}</p> }
+
+  <section class="summary" aria-label="Resumen de ventas">
+    <article class="summary-card"><span>Ventas registradas</span><strong>{{ sales().length }}</strong><small>Total de ventas</small></article>
+    <article class="summary-card"><span>Ventas a crédito</span><strong>{{ credit() }}</strong><small>Con seguimiento de cuotas</small></article>
+    <article class="summary-card"><span>Al día</span><strong>{{ current() }}</strong><small>Créditos sin atraso</small></article>
+    <article class="summary-card alert"><span>Con atraso</span><strong>{{ overdue() }}</strong><small>Requieren seguimiento</small></article>
+  </section>
+
+  <section class="portfolio" aria-labelledby="portfolio-title">
+    <div class="section-heading"><h2 id="portfolio-title">Productos vendidos</h2><span>{{ filtered().length }} resultados</span></div>
+    <div class="toolbar">
+      <label class="search-field" for="sale-search"><span>Buscar venta</span><input id="sale-search" type="search" placeholder="Producto, modelo o cliente" [value]="query()" (input)="setQuery($event)"></label>
+      <div class="filters" role="group" aria-label="Filtrar ventas">
+        @for (option of ['Todos', 'Al día', 'Vencido', 'Contado']; track option) { <button type="button" [class.selected]="filter() === option" [attr.aria-pressed]="filter() === option" (click)="setFilter($any(option))">{{ option }}</button> }
+      </div>
+    </div>
+    <div class="table-wrap" role="region" aria-label="Lista de ventas" tabindex="0">
+      <table>
+        <thead><tr><th scope="col">Producto y cliente</th><th scope="col">Venta</th><th scope="col">Pago</th><th scope="col">Próxima cuota</th><th scope="col">Estado</th><th scope="col">Detalle</th></tr></thead>
+        <tbody>
+          @if (loading()) { <tr><td colspan="6" class="empty">Cargando ventas…</td></tr> }
+          @else {
+            @for (sale of filtered(); track sale.id) {
+              <tr>
+                <td class="tv-identity"><strong>{{ sale.product_name }}</strong><span>{{ sale.model || 'Sin modelo' }} · {{ sale.customer_name }}</span></td>
+                <td><small class="tv-mobile-label">Venta</small><strong>{{ sale.total_amount | currency:'USD':'symbol':'1.2-2':'es-EC' }}</strong><span>{{ sale.sold_at | date:'dd MMM yyyy':'':'es-EC' }}</span></td>
+                <td><small class="tv-mobile-label">Forma de pago</small><strong>{{ sale.payment_type === 'credito' ? 'Crédito' : 'Contado' }}</strong><span>{{ sale.payment_method }}</span></td>
+                <td><small class="tv-mobile-label">Próxima cuota</small>@if (nextDue(sale); as due) { <strong>{{ due | date:'dd MMM yyyy':'':'es-EC' }}</strong><span>{{ paidCount(sale) }} de {{ sale.installment_count }} pagadas</span> } @else { <strong>—</strong> }</td>
+                <td><small class="tv-mobile-label">Estado</small><span class="pill" [class.overdue]="status(sale) === 'Vencido'" [class.upcoming]="status(sale) === 'Contado'">{{ status(sale) }}</span></td>
+                <td class="tv-row-action"><button type="button" class="button-link" (click)="selected.set(sale)">Ver detalle</button></td>
+              </tr>
+            } @empty { <tr><td colspan="6" class="empty">No hay ventas registradas con este filtro. Usa «Registrar venta» para comenzar.</td></tr> }
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  @if (selected(); as sale) {
+    <div class="detail-backdrop" (click)="selected.set(null)"></div>
+    <aside class="detail-panel" role="dialog" aria-modal="true" [attr.aria-label]="'Detalle de ' + sale.product_name">
+      <div class="detail-top"><span class="eyebrow">Detalle de venta</span><button type="button" aria-label="Cerrar detalle" (click)="selected.set(null)">✕</button></div>
+      <h2>{{ sale.product_name }}</h2><p class="text-muted">{{ sale.customer_name }}</p>
+      <dl><div><dt>Modelo</dt><dd>{{ sale.model || 'No indicado' }}</dd></div><div><dt>Número de serie</dt><dd>{{ sale.serial_number || 'No indicado' }}</dd></div><div><dt>Fecha de venta</dt><dd>{{ sale.sold_at | date:'dd MMM yyyy':'':'es-EC' }}</dd></div><div><dt>Valor total</dt><dd>{{ sale.total_amount | currency:'USD':'symbol':'1.2-2':'es-EC' }}</dd></div><div><dt>Forma de pago</dt><dd>{{ sale.payment_type === 'credito' ? 'Crédito' : 'Contado' }} · {{ sale.payment_method }}</dd></div>
+        @if (sale.payment_type === 'credito') { <div><dt>Entrada</dt><dd>{{ sale.down_payment | currency:'USD':'symbol':'1.2-2':'es-EC' }}</dd></div><div><dt>Plazo</dt><dd>{{ sale.installment_count }} meses</dd></div><div><dt>Cuota estimada</dt><dd>{{ installmentAmount(sale) | currency:'USD':'symbol':'1.2-2':'es-EC' }}</dd></div><div><dt>Cuotas pagadas</dt><dd>{{ paidCount(sale) }} de {{ sale.installment_count }}</dd></div><div><dt>Próxima cuota</dt><dd>{{ (nextDue(sale) | date:'dd MMM yyyy':'':'es-EC') || 'Completado' }}</dd></div> }
+      </dl>
+      @if (sale.notes) { <p class="detail-note">{{ sale.notes }}</p> }
+      @if (sale.payment_type === 'credito' && paidCount(sale) < sale.installment_count) { <button class="button-link primary" type="button" [disabled]="saving()" (click)="recordPayment(sale)">Registrar cuota {{ paidCount(sale) + 1 }} pagada</button> }
+    </aside>
+  }
+
+  @if (showForm()) {
+    <div class="detail-backdrop" (click)="closeForm()"></div>
+    <section class="detail-panel sale-form-panel" role="dialog" aria-modal="true" aria-label="Registrar venta">
+      <div class="detail-top"><span class="eyebrow">Nueva venta</span><button type="button" aria-label="Cerrar formulario" (click)="closeForm()">✕</button></div>
+      <h2>Registrar producto vendido</h2>
+      @if (error()) { <p class="message error" role="alert">{{ error() }}</p> }
+      <form #saleForm="ngForm" (ngSubmit)="save()" class="sale-form">
+        <label>Cliente<input name="customer_name" [(ngModel)]="form().customer_name" required minlength="2" maxlength="160" placeholder="Nombre del cliente"></label>
+        <label>Producto<input name="product_name" [(ngModel)]="form().product_name" required minlength="2" maxlength="160" placeholder="Ej.: Televisor TCL 43 pulgadas"></label>
+        <div class="form-pair"><label>Modelo<input name="model" [(ngModel)]="form().model" maxlength="120" placeholder="Ej.: 43P635"></label><label>Número de serie<input name="serial_number" [(ngModel)]="form().serial_number" maxlength="120"></label></div>
+        <div class="form-pair"><label>Fecha de venta<input type="date" name="sold_at" [(ngModel)]="form().sold_at" required></label><label>Valor total (USD)<input type="number" name="total_amount" [(ngModel)]="form().total_amount" required min="0.01" step="0.01"></label></div>
+        <div class="form-pair"><label>Tipo de venta<select name="payment_type" [(ngModel)]="form().payment_type"><option value="contado">Contado</option><option value="credito">Crédito</option></select></label><label>Medio de pago<select name="payment_method" [(ngModel)]="form().payment_method"><option value="efectivo">Efectivo</option><option value="transferencia">Transferencia</option><option value="tarjeta">Tarjeta</option><option value="otro">Otro</option></select></label></div>
+        @if (form().payment_type === 'credito') { <div class="form-pair"><label>Entrada (USD)<input type="number" name="down_payment" [(ngModel)]="form().down_payment" min="0" step="0.01"></label><label>Plazo en meses<input type="number" name="installment_count" [(ngModel)]="form().installment_count" required min="1" max="120" step="1"></label></div><label>Primer vencimiento<input type="date" name="first_due_date" [(ngModel)]="form().first_due_date" required></label> }
+        <label>Notas opcionales<textarea name="notes" [(ngModel)]="form().notes" maxlength="1000" rows="3"></textarea></label>
+        <button class="button-link primary" type="submit" [disabled]="saleForm.invalid || saving()">{{ saving() ? 'Guardando…' : 'Guardar venta' }}</button>
+      </form>
+    </section>
+  }
+</main>
